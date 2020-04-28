@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- TODO: Change title -->
-    <title>Covid-19 for Top 10</title>
+    <title>Dataset</title>
 
     <!-- Load Bulma from CDN (consider saving it to repository instead) -->
     <!-- https://bulma.io/ -->
@@ -94,45 +94,43 @@
   </nav>
   <!-- End page navigation -->
 
+
   <section class="section">
     <div class="container">
       <!-- Begin page content -->
       <div class="content">
-        <h1 class="title">
-          <!-- TODO: Change page title -->
-          Description
-        </h1>
-        <p class="subtitle">
-          <!-- TODO: Change page subtitle -->
-          What you can find in this website?
-        </p>
+        <h2 id="data">Data Set</h2>
 
 
-        <p>One Asian country and seven European countries are among the ten most affected list of countries with coronavirus, while more European countries are witnessing a surge in cases. The US replaced China as the country with the highest coronavirus cases on 26 March, while more than 92% of the global coronavirus cases are currently outside China. But what is the actual number of confired and deceased cases? Why death rate is flactuating between different countries? What are the major factors impacting the rate?
-          
-        </p>
 
-
-        <p>The goal for this website is to visualize and discuss a dataset related to Top 10 Covid-19 Infected Regions. Keep reading to find out which regions are having a better responce to this novel virus.</p>
-
-        
-        
-
-        <span class="heading">Acknowledgements</span>
-
-        <p>
-          <a href="#">Link to insiration</a><br/>
-          <a href="#">Link to StackOverflow snippet</a>
-        </p>
-
-        <p class="is-6">
-          <em>Thanks to Person Name for their suggestion to do something with the visualization.</em>
-        </p>
-
+        <p>Novel Corona Virus (COVID-19) epidemiological data since 22 January 2020. The data is compiled by the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) from various sources including the World Health Organization (WHO), DXY.cn. Pneumonia. 2020, BNO News, National Health Commission of the People’s Republic of China (NHC), China CDC (CCDC), Hong Kong Department of Health, Macau Government, Taiwan CDC, US CDC, Government of Canada, Australia Government Department of Health, European Centre for Disease Prevention and Control (ECDC), Ministry of Health Singapore (MOH).JSU CCSE maintains the data on the <a href="https://github.com/CSSEGISandData/COVID-19">2019 Novel Coronavirus COVID-19 (2019-nCoV)</a> Data Repository on github, The data has been last updated on April 13, 2020 and has been accesses on the same day.</p>
 
         
 
-      </div>
+        <p>Overall, original dataset has 9 columns and over 21914 rows, below you can find important columns that were used on this website's visualizations and their detailed description:</p>
+
+        <ol>
+
+          <li><strong>Province/State:</strong> Infected Country's Province.</li>
+
+          <li><strong>Country/Region:</strong> Infected Country.  </li>
+
+          <li><strong>Confirmed:</strong> Number of Confirmed Cases. </li>
+
+          <li><strong>Recovered:</strong> Number of Recovered Cases.</li>
+
+          <li><strong>Deaths:</strong> Number of Deaths. </li>
+
+
+        </ol>
+
+        
+        <h3 id="wrangling">Wrangling</h3>
+
+        <p>Data has been processed using Tableau. You can find details of filters in each visualization page.</p>
+
+
+             </div>
       <!-- End page content -->
     </div>
   </section>
@@ -150,7 +148,8 @@
 
       <p>
         <!-- TODO: Change to link to your Github repository -->
-        <a href="https://github.com/usf-cs360-spring2020/template-bulma" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+        <a href="https://github.com/usf-cs360-spring2020/template-bulma" class="button is-small"
+          style="padding-left: 1em; padding-right: 1em;">
           <i class="fab fa-github-alt"></i>&nbsp;<strong>Github</strong>
         </a>
 
@@ -159,7 +158,8 @@
         </a>
 
         <a href="https://bulma.io" class="button is-small">
-          <img src="https://bulma.io/images/made-with-bulma--semiblack.png" alt="Made with Bulma" width="128" height="24">
+          <img src="https://bulma.io/images/made-with-bulma--semiblack.png" alt="Made with Bulma" width="128"
+            height="24">
         </a>
       </p>
     </div>
@@ -169,22 +169,22 @@
   <!-- Mobile menu responsiveness -->
   <!-- https://bulma.io/documentation/components/navbar/ -->
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    document.addEventListener('DOMContentLoaded', () => {
+      const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
-    if ($navbarBurgers.length > 0) {
-      $navbarBurgers.forEach( el => {
-        el.addEventListener('click', () => {
-          const target = el.dataset.target;
-          const $target = document.getElementById(target);
-          el.classList.toggle('is-active');
-          $target.classList.toggle('is-active');
+      if ($navbarBurgers.length > 0) {
+        $navbarBurgers.forEach(el => {
+          el.addEventListener('click', () => {
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
         });
-      });
-    }
-  });
+      }
+    });
   </script>
   <!-- End mobile menu responsiveness -->
-  </body>
+</body>
 
 </html>
