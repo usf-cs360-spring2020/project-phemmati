@@ -168,48 +168,26 @@
     return b.height - a.height || b.count - a.count;
   });
 
-  let layout = d3.cluster().size([2 * Math.PI, (diameter / 2) - pad]);
+  let layout = d3.tree().size([width - 2 * pad, height - 2 * pad]);
 
   layout(data);
 
-  data.each(function(node) {
-    node.theta = node.x;
-    node.radial = node.y;
-
-    let point = toCartesian(node.radial, node.theta);
-    node.x = point.x;
-    node.y = point.y;
-  });
-
+  let svg = d3.select(DOM.svg(width, height))
+      .style("width", width)
+      .style("height", height);
   
-  let line = d3.line()
-    .curve(d3.curveLinear)
+  let plot = svg.append("g")
+    .attr("id", "plot")
+    .attr("transform", translate(pad, pad));
+  
+  let generator = d3.linkVertical()
     .x(d => d.x)
     .y(d => d.y);
-  
-  let generator = function(node) {
-    return line([node.source, node.target]);
-  }
-  
-  
- 
-  myColor = d3.scaleSequential([data.height, 0], d3.interpolateViridis)
 
   drawLinks(plot.append("g"), data.links(), generator);
-  drawNodes(plot.append("g"), data.descendants(), true);
+  drawNodes(plot.append("g"), data.descendants(), true)
 
-
-  function toCartesian(r, theta) {
-    return {
-      x: r * Math.cos(theta),
-      y: r * Math.sin(theta)
-    };
-  }
-
-  function translate(x, y) {
-    return 'translate(' + String(x) + ',' + String(y) + ')';
-  }
-
+  
   function drawLinks(g, links, generator) {
     let paths = g.selectAll('path')
       .data(links)
