@@ -1,38 +1,32 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8">
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Homework 4</title>
+    <!-- TODO: Change title -->
+    <title>tree</title>
 
-  <!-- Load Bulma from CDN (consider saving it to repository instead) -->
+    <!-- Load Bulma from CDN (consider saving it to repository instead) -->
     <!-- https://bulma.io/ -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
 
     <!-- Load Font Awesome 5 (free) icons -->
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  </head>
 
-  <script src="https://d3js.org/d3.v5.min.js"></script>
-  <script src="https://d3js.org/d3-path.v1.min.js"></script>
-  <script src="https://d3js.org/d3-shape.v1.min.js"></script>
-  <!-- load the d3.js library -->
-  <script src="//d3js.org/d3.v5.min.js"></script>
-  <link href="style.css" rel="stylesheet" type="text/css">
+  <body>
 
-</head>
-
-<body>
-
-   <!-- Page header -->
+  <!-- Page header -->
   <!-- https://bulma.io/documentation/layout/hero/ -->
   <section class="hero is-info is-bold">
     <div class="hero-body">
       <div class="container">
         <!-- TODO: Change title -->
-        <h1 class="title">San Francisco Call Service Center Visualization</h1>
+        <h1 class="title">How is Covid-19 for Top 10 Infected Regions</h1>
         <!-- TODO: Change subtitle -->
+        <h2 class="subtitle">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
       </div>
     </div>
   </section>
@@ -60,7 +54,7 @@
       <div id="main-menu" class="navbar-menu has-text-weight-medium">
         <!-- Left navbar items -->
         <div class="navbar-start">
-          <a class="navbar-item" href="#data" title="Data">
+          <a class="navbar-item" href="data.html" title="Data">
             <span class="icon"><i class="fas fa-table"></i></span>
             <span>Data</span>
           </a>
@@ -72,14 +66,11 @@
             </a>
 
             <div class="navbar-dropdown">
-              <a href="nodelink.html" class="navbar-item">
+              <a href="line.html" class="navbar-item">
                 <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>Node-Link Diagram</span>
+                <span>Line Chart</span>
               </a>
-              <a href="space.html" class="navbar-item">
-                <span class="icon"><i class="fas fa-chart-area"></i></span>
-                <span>Space Filling Diagram</span>
-              </a>
+              
               
             </div>
           </div>
@@ -105,29 +96,13 @@
 
   <section class="section">
     <div class="container content">
-      <h1>Circular Dendogram with Straight Lines</h1><br>
+      
       
       <svg id="nodelink"></svg>
 
       
 
-      <h4 id="interactivity">Interactivity</h4>
-      <p>Using tooltip, you can see the name of the case and the amount of cases related to that. Mouse over to green circles to see the type of any case.</p>
       
-      <h4 id="encoding">Encoding</h4>
-       <p>First level(root) is showing the city which is San Francisco.(Yellow)</br>
-       Second level shows the <b>call type groups</b>.(green)</br>
-       Third level shows the <b>call type </b>and how many of these cases happened per call type group in the city.(Dark Blue)</br>
-       Fourh level or the leaves show <b>final disposition</b>.(Purple)</br>
-       </p>     
-       <h4 id="wrangling">Wrangling</h4>
-       <p> Data has been filtered using DataSF website to show only cases related to March 2020, city of San Francisco.
-        </p>
-       <h4 id="conclusion">Conclusion</h4>
-       <p>
-        In Conclusion, plot gives us the overall overview of the process from receiving the call up to the disposition of the call.</br></p>
-
-
           </div>
           <!-- End page content -->
         </div>
