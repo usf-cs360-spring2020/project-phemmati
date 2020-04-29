@@ -132,7 +132,7 @@
   
   var plot = svg.append("g")
     .attr("id", "plot")
-    .attr("transform", translate(pad + 200, pad + 120));
+    .attr("transform", translate(pad, pad));
 
   var parent = d3.nest()
     .key(function(d) {
@@ -183,6 +183,8 @@
   let generator = d3.linkVertical()
     .x(d => d.x)
     .y(d => d.y);
+
+    myColor = d3.scaleSequential([data.height, 0], d3.interpolateViridis)
 
   drawLinks(plot.append("g"), data.links(), generator);
   drawNodes(plot.append("g"), data.descendants(), true)
