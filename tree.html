@@ -139,13 +139,16 @@
       return d["City"];
     })
     .key(function(d) {
-      return d["Call Type Group"]
+      return d["Police District"]
     })
     .key(function(d) {
-      return d["Call Type"]
+      return d["Neighborhood"]
     })
     .key(function(d) {
-      return d["Call Final Disposition"]
+      return d["Category"]
+    })
+    .key(function(d) {
+      return d["Request Type"]
     })
     .rollup(function(v) {
       return v.length;
