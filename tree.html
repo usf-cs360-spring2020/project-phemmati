@@ -176,7 +176,9 @@
      // .style("width", width)
      // .style("height", height);
   
-  
+  function translate(x, y) {
+    return 'translate(' + String(x) + ',' + String(y) + ')';
+  }
   
   let generator = d3.linkVertical()
     .x(d => d.x)
