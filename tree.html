@@ -176,9 +176,7 @@
      // .style("width", width)
      // .style("height", height);
   
-  let plot = svg.append("g")
-    .attr("id", "plot")
-    .attr("transform", translate(pad, pad));
+  
   
   let generator = d3.linkVertical()
     .x(d => d.x)
