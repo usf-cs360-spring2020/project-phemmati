@@ -1,415 +1,1899 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
+<meta charset="UTF-8">
+<style>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+.node circle {
+  fill: red;
+  stroke: steelblue; 
+  stroke-width: 1px;
+}
 
-    <!-- TODO: Change title -->
-    <title>tree</title>
+.node text {
+  font: 8px sans-serif;
+}
 
-    <!-- Load Bulma from CDN (consider saving it to repository instead) -->
-    <!-- https://bulma.io/ -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
-
-    <!-- Load Font Awesome 5 (free) icons -->
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-  <script src="https://d3js.org/d3-path.v1.min.js"></script>
-  <script src="https://d3js.org/d3-shape.v1.min.js"></script>
-  <!-- load the d3.js library -->
-  <script src="//d3js.org/d3.v5.min.js"></script>
-  <link href="styles.css" rel="stylesheet" type="text/css">
-  </head>
-
-  <body>
-
-  <!-- Page header -->
-  <!-- https://bulma.io/documentation/layout/hero/ -->
-  <section class="hero is-info is-bold">
-    <div class="hero-body">
-      <div class="container">
-        <!-- TODO: Change title -->
-        <h1 class="title">How is Covid-19 for Top 10 Infected Regions</h1>
-        <!-- TODO: Change subtitle -->
-        <h2 class="subtitle">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
-      </div>
-    </div>
-  </section>
-  <!-- End page header -->
-
-  <!-- Page navigation -->
-  <!-- https://bulma.io/documentation/components/navbar/ -->
-  <nav class="navbar is-light" role="navigation" aria-label="main navigation">
-    <div class="container">
-      <div class="navbar-brand">
-        <!-- TODO: Change link to repository homepage if needed -->
-        <!-- TODO: Change which navbar-item is-active if needed -->
-        <a class="navbar-item is-active" href="index.html">
-          <span class="icon"><i class="fas fa-home"></i></span>
-          <span>Home</span>
-        </a>
-
-        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-
-      <div id="main-menu" class="navbar-menu has-text-weight-medium">
-        <!-- Left navbar items -->
-        <div class="navbar-start">
-          <a class="navbar-item" href="data.html" title="Data">
-            <span class="icon"><i class="fas fa-table"></i></span>
-            <span>Data</span>
-          </a>
-
-          <!-- TODO: Modify or remove dropdown -->
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-              Visualizations
-            </a>
-
-            <div class="navbar-dropdown">
-              <a href="line.html" class="navbar-item">
-                <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>Line Chart</span>
-              </a>
-              
-              
-            </div>
-          </div>
-        </div>
-
-        <!-- Right navbar items -->
-        <div class="navbar-end">
-          <!-- TODO: Update as needed -->
-          <a class="navbar-item" href="grade.html" title="About">
-            <span class="icon"><i class="fas fa-tasks"></i></span>
-            <span>Grade</span>
-          </a>
-
-          <a class="navbar-item" href="about.html" title="About">
-            <span class="icon"><i class="fas fa-info-circle"></i></span>
-            <span>About</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </nav>
-  <!-- End page navigation -->
-
-  <section class="section">
-    <div class="container content">
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px; 
+}
+    /* Tooltip container */
+    .tooltip {
       
-      
-      <svg id="nodelink"></svg>
+        display: inline-block;
+        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+    }
+  
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
 
-      
+        /* Position the tooltip text - see examples below! */
+        position: absolute;
+        z-index: 1;
+    }
 
-      
-          </div>
-          <!-- End page content -->
-        </div>
-        <!--</section>-->
-</body>
+    /* Show the tooltip text when you mouse over the tooltip container */
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+    }
+
+</style>
+
+<body>
+
+<!-- load the d3.js library --> 
+<script src="https://d3js.org/d3.v5.min.js"></script>
 
 <script>
-  d3.csv("data.csv").then(function(data_csv){
-  console.log(data_csv);
-
-  var width = 960,
-      height = 500,
-      pad = 100,
-      diameter = 600;
-
-  // setup svg width and height
-  var svg = d3.select("body").select("#nodelink")
-    .style("width", width)
-    .style("height", height);
-
   
-  var plot = svg.append("g")
-    .attr("id", "plot")
-    .attr("transform", translate(pad, pad));
+  var treeData ={
+      
+    "name": "Covid-19",
+    "children": [{
+        "name": "Asia",
+        "children": [{
+            "name": "United Arab Emirates",
+            "Confirmed": 11380,
+            "Death": 89,
+            "Recovered": 2181
+        },{
+            "name": "Turkey",
+            "Confirmed": 114653,
+            "Death": 2992,
+            "Recovered": 38809
+        },{
+            "name": "Timor-Leste",
+            "Confirmed": 24,
+            "Death": 0,
+            "Recovered": 6
+        },{
+            "name": "Thailand",        
+            "Confirmed": 2938,
+            "Death": 54,
+            "Recovered": 2652
+        },{
+            "name": "Taiwan*",
+            "Confirmed": 429,
+            "Death": 6,
+            "Recovered": 307
+        },{
+            "name": "Syria",
+            "Confirmed": 43,
+            "Death": 3,
+            "Recovered": 21
+        },{
+            "name": "Sri Lanka",
+            "Confirmed": 619,
+            "Death": 7,
+            "Recovered": 134
+        },{
 
-  var parent = d3.nest()
-    .key(function(d) {
-      return d["City"];
-    })
-    .key(function(d) {
-      return d["Police District"]
-    })
-    .key(function(d) {
-      return d["Neighborhood"]
-    })
-    .key(function(d) {
-      return d["Category"]
-    })
-    .key(function(d) {
-      return d["Request Type"]
-    })
-    .rollup(function(v) {
-      return v.length;
-    })
-    .entries(data_csv);
+            "name": "Singapore",
+            "Confirmed": 14951,
+            "Death": 14,
+            "Recovered": 1128
+        },{
 
-  root = parent[0].key;
+            "name": "Saudi Arabia",
+            "Confirmed": 20077,
+            "Death": 152,
+            "Recovered": 2784
+        },{
 
-  var data = d3.hierarchy(parent[0], function(d) {
-    return d.values;
-  });
-
-  data.count()
-  data.sum(d => d.value);
-
-  data.sort(function(a, b) {
-    return b.height - a.height || b.count - a.count;
-  });
-
-  let layout = d3.tree().size([width - 2 * pad, height - 2 * pad]);
-
-  layout(data);
-
-  //let svg = d3.select(DOM.svg(width, height))
-     // .style("width", width)
-     // .style("height", height);
+            "name": "Qatar",
+            "Confirmed": 11921,
+            "Death": 10,      
+            "Recovered": 1134
+        },{
+            "name": "Philippines",
+            "Confirmed": 7958,
+            "Death": 530,
+            "Recovered": 975
+        },{
+            "name": "Pakistan",
+            "Confirmed": 14612,
+            "Death": 312,
+            "Recovered": 3233
+        },{
+            "name": "Oman",
+            "Confirmed": 2131,
+            "Death": 10,
+            "Recovered": 364
+        },{
+            "name": "Nepal",
+            "Confirmed": 54,
+            "Death": 0,
+            "Recovered": 16
+        },{
+          "name": "Mongolia",
+          "Confirmed": 38,
+          "Death": 0,
+          "Recovered": 10
+        },{
+          "name": "Maldives",
+          "Confirmed": 250,
+          "Death": 0,
+          "Recovered": 17
+        },{
+          "name": "Malaysia",
+          "Confirmed": 5851,
+          "Death": 100,
+          "Recovered": 4032
+        },{
+          "name": "Lebanon",
+          "Confirmed": 717,
+          "Death": 24,
+          "Recovered": 145
+        },{
+          "name": "Laos",
+          "Confirmed": 19,
+          "Death": 0,
+          "Recovered": 7
+        },{
+          "name": "Kyrgyzstan",
+          "Confirmed": 708,
+          "Death": 8,
+          "Recovered": 416
+        },{
+          "name": "Kuwait",
+          "Confirmed": 3440,
+          "Death": 23,
+          "Recovered": 1176
+        },{
+          "name": "Korea, South",
+          "Confirmed": 10761,
+          "Death": 246,
+          "Recovered": 8922
+        },{
+          "name": "Kazakhstan",
+          "Confirmed": 3027,
+          "Death": 25,
+          "Recovered": 774
+        },{
+          "name": "Jordan",
+          "Confirmed": 449,
+          "Death": 8,
+          "Recovered": 348
+        },{
+          "name": "Japan",
+          "Confirmed": 13736,
+          "Death": 394,
+          "Recovered": 1899
+        },{
+          "name": "Israel",
+          "Confirmed": 15728,
+          "Death": 210,
+          "Recovered": 7746
+        },{
+          "name": "Iraq",
+          "Confirmed": 1928,
+          "Death": 90,
+          "Recovered": 1319
+        },{
+          "name": "Iran",
+          "Confirmed": 92584,
+          "Death": 5877,
+          "Recovered": 72439
+        },{
+          "name": "Indonesia",
+          "Confirmed": 9511,
+          "Death": 773,
+          "Recovered": 1254
+        },{
+          "name": "India",
+          "Confirmed": 31324,
+          "Death": 1008,
+          "Recovered": 7747
+        },{
+          "name": "China",
+          "children": [{
+                "name": "Zhejiang",
+                "Confirmed": 1268,
+                "Death": 1,
+                "Recovered": 1262,
+            },{
+                "name": "Yunnan",
+                "Confirmed": 185,
+                "Death": 2,
+                "Recovered": 181
+            },{
+                "name": "Xinjiang",
+                "Confirmed": 76,
+                "Death": 3,
+                "Recovered": 73
+            },{
+                "name": "Tibet",
+                "Confirmed": 1,
+                "Death": 0,
+                "Recovered": 1
+            }, {
+                "name": "Tianjin",
+                "Confirmed": 190,
+                "Death": 3,
+                "Recovered": 183
+            },{
+                "name": "Sichuan",
+                "Confirmed": 561,
+                "Death": 3,
+                "Recovered": 558
+            },{
+                "name": "Shanxi",
+                "Confirmed": 197,
+                "Death": 0,
+                "Recovered": 160
+            },{
+                "name": "Shanghai",
+                "Confirmed": 645,
+                "Death": 7,
+                "Recovered": 584
+            },{
+                "name": "Shandong",
+                "Confirmed": 787,
+                "Death": 7,
+                "Recovered": 771
+            },{
+                "name": "Shaanxi",
+                "Confirmed": 306,
+                "Death": 3,
+                "Recovered": 253
+            },{
+                "name": "Qinghai",
+                "Confirmed": 18,
+                "Death": 0,
+                "Recovered": 18
+            },{
+                "name": "Ningxia",
+                "Confirmed": 75,
+                "Death": 0,
+                "Recovered": 75
+            },{
+                "name": "Macau",
+                "Confirmed": 45,
+                "Death": 0,
+                "Recovered": 33
+            },{
+                "name": "Liaoning",
+                "Confirmed": 146,
+                "Death": 2,
+                "Recovered": 143
+            },{
+                "name": "Jilin",
+                "Confirmed": 110,
+                "Death": 1,
+                "Recovered": 99
+            },{
+                "name": "Jiangxi",
+                "Confirmed": 937,
+                "Death": 1,
+                "Recovered": 936
+            },{
+                "name": "Jiangsu",
+                "Confirmed": 653,
+                "Death": 0,
+                "Recovered": 647
+            },{            
+                "name": "Inner Mongolia",
+                "Confirmed": 199,
+                "Death": 1,
+                "Recovered": 146
+            },{
+                "name": "Hunan",
+                "Confirmed": 1019,
+                "Death": 4,
+                "Recovered": 1015
+            },{
+                "name": "Hubei",
+                "Confirmed": 68128,
+                "Death": 4512,
+                "Recovered": 63616
+            },{
+                "name": "Hong Kong",
+                "Confirmed": 1037,
+                "Death": 4,
+                "Recovered": 811
+            },{
+                "name": "Henan",
+                "Confirmed": 1276,
+                "Death": 22,
+                "Recovered": 1254
+            },{
+                "name": "Heilongjiang",
+                "Confirmed": 939,
+                "Death": 13,
+                "Recovered": 587
+            },{
+                "name": "Hebei",
+                "Confirmed": 328,
+                "Death": 6,
+                "Recovered": 318
+            },{
+                "name": "Hainan",
+                "Confirmed": 168,
+                "Death": 6,
+                "Recovered": 162
+            },{
+                "name": "Guizhou",
+                "Confirmed": 147,
+                "Death": 2,
+                "Recovered": 145
+            },{
+                "name": "Guangxi",
+                "Confirmed": 254,
+                "Death": 2,
+                "Recovered": 252
+            },{
+                "name": "Guangdong",
+                "Confirmed": 1588,
+                "Death": 8,
+                "Recovered": 1554
+            },{
+                "name": "Gansu",
+                "Confirmed": 139,
+                "Death": 2,
+                "Recovered": 137
+            },{
+                "name": "Fujian",
+                "Confirmed": 355,
+                "Death": 1,
+                "Recovered": 352
+            },{
+                "name": "Chongqing",
+                "Confirmed": 579,
+                "Death": 6,
+                "Recovered": 573
+            },{
+                "name": "Beijing",
+                "Confirmed": 593,
+                "Death": 9,
+                "Recovered": 538
+            },{
+                "name": "Anhui",
+                "Confirmed": 991,
+                "Death": 6,
+                "Recovered": 985
+            }]
+        },{
+           "name": "Cambodia",
+           "Confirmed": 122,
+           "Death": 0,
+           "Recovered": 119
+        },{
+           "name": "Burma",
+           "Confirmed": 150,
+           "Death": 5,
+           "Recovered": 16
+        },{       
+           "name": "Brunei",
+           "Confirmed": 138,
+           "Death": 1,
+           "Recovered": 124
+        },{   
+           "name": "Bhutan",
+           "Confirmed": 7,
+           "Death": 0,
+           "Recovered": 5
+        },{   
+           "name": "Bangladesh",
+           "Confirmed": 6462,
+           "Death": 155,
+           "Recovered": 139
+        },{
+           "name": "Bahrain",
+           "Confirmed": 2811,
+           "Death": 8,
+           "Recovered": 1310
+        },{
+           "name": "Azerbaijan",
+           "Confirmed": 1717,
+           "Death": 22,
+           "Recovered": 1221
+        },{
+           "name": "Armenia",
+           "Confirmed": 1867,
+           "Death": 30,
+           "Recovered": 866
+        },{
+           "name": "Afghanistan",
+           "Confirmed": 1828,
+           "Death": 58,
+           "Recovered": 228
   
-  function translate(x, y) {
-    return 'translate(' + String(x) + ',' + String(y) + ')';
+        }]  
+    }, {
+        "name": "Africa",
+        "children": [{
+            "name": "Zimbabwe",
+            "Confirmed": 32,
+            "Death": 4,
+            "Recovered": 5
+        }, {
+            "name": "Zambia",
+            "Confirmed": 95,
+            "Death": 3,
+            "Recovered": 42
+        }, {
+            "name": "Western Sahara",
+            "Confirmed": 6,
+            "Death": 0,
+            "Recovered": 5
+        }, {
+            "name": "Tunisia",
+            "Confirmed": 975,
+            "Death": 40,
+            "Recovered": 279
+        }, {
+            "name": "Uganda",
+            "Confirmed": 79,
+            "Death": 0,
+            "Recovered": 52
+        }, {
+            "name": "Togo",
+            "Confirmed": 99,
+            "Death": 6,
+            "Recovered": 63
+        }, {
+            "name": "Tanzania",
+            "Confirmed": 299,
+            "Death": 10,
+            "Recovered": 48
+        }, {
+            "name": "Sudan",
+            "Confirmed": 318,
+            "Death": 25,
+            "Recovered": 31
+        }, {
+            "name": "South Sudan", 
+            "Confirmed": 34,
+            "Death": 0,
+            "Recovered": 0
+        }, {
+            "name": "South Africa",
+            "Confirmed": 4996,
+            "Death": 93,
+            "Recovered": 2073
+        }, {
+            "name": "Somalia",
+            "Confirmed": 528,
+            "Death": 28,
+            "Recovered": 19
+        }, {
+            "name": "Sierra Leone",
+            "Confirmed": 104,
+            "Death": 4,
+            "Recovered": 12
+        }, {
+            "name": "Seychelles",
+            "Confirmed": 11,
+            "Death": 0,
+            "Recovered": 6
+        }, {
+            "name": "Senegal",
+            "Confirmed": 823,
+            "Death": 9,
+            "Recovered": 296
+        }, {
+            "name": "Sao Tome and Principe",
+            "Confirmed": 8,
+            "Death": 0,
+            "Recovered": 4
+        }, {
+            "name": "Rwanda",
+            "Confirmed": 212,
+            "Death": 0,
+            "Recovered": 95
+        }, {
+            "name": "Nigeria",
+            "Confirmed": 1532,
+            "Death": 44,
+            "Recovered": 255
+        }, {
+            "name": "Niger",
+            "Confirmed": 709,
+            "Death": 31,
+            "Recovered": 403
+        }, {
+            "name": "Namibia",
+            "Confirmed": 16,
+            "Death": 0,
+            "Recovered": 8
+        }, {
+            "name": "Mozambique",
+            "Confirmed": 76,
+            "Death": 0,
+            "Recovered": 12
+        }, {
+            "name": "Morocco",
+            "Confirmed": 4252,
+            "Death": 165,
+            "Recovered": 778
+        }, {
+            "name": "Mauritius",
+            "Confirmed": 334,
+            "Death": 10,
+            "Recovered": 303
+        }, {
+            "name": "Mauritania",
+            "Confirmed": 7,
+            "Death": 1,
+            "Recovered": 6
+        }, {
+            "name": "Mali",
+            "Confirmed": 424,
+            "Death": 24,
+            "Recovered": 122
+        }, {
+            "name": "Malawi",
+            "Confirmed": 36,
+            "Death": 3,
+            "Recovered": 5
+        }, {
+            "name": "Madagascar",
+            "Confirmed": 128,
+            "Death": 0,
+            "Recovered": 82
+        }, {
+            "name": "Libya",
+            "Confirmed": 61,
+            "Death": 2,
+            "Recovered": 18
+        }, {
+            "name": "Liberia",
+            "Confirmed": 141,
+            "Death": 16,
+            "Recovered": 45
+        }, {
+            "name": "Kenya",
+            "Confirmed": 374,
+            "Death": 14,
+            "Recovered": 124
+        },{
+            "name": "Guinea-Bissau",
+            "Confirmed": 73,
+            "Death": 1,
+            "Recovered": 18
+        },{ 
+            "name": "Guinea",
+            "Confirmed": 1240,
+            "Death": 7,
+            "Recovered": 269
+        },{
+            "name": "Ghana",
+            "Confirmed": 1671,
+            "Death": 16,
+            "Recovered": 188
+        },{
+            "name": "Gambia",
+            "Confirmed": 10,
+            "Death": 1,
+            "Recovered": 8
+        }, {
+            "name": "Gabon",
+            "Confirmed": 238,
+            "Death": 3,
+            "Recovered": 53
+        },{
+            "name": "Ethiopia",
+            "Confirmed": 126,
+            "Death": 3,
+            "Recovered": 50
+        },{
+            "name": "Eswatini",
+            "Confirmed": 71,
+            "Death": 1,
+            "Recovered": 10
+        },{
+            "name": "Eritrea",
+            "Confirmed": 39,
+            "Death": 0,
+            "Recovered": 19
+        },{
+            "name": "Equatorial Guinea",
+            "Confirmed": 315,
+            "Death": 1,
+            "Recovered": 9
+        }, {
+            "name": "Egypt",
+            "Confirmed": 5042,
+            "Death": 359,
+            "Recovered": 1304
+        },{
+            "name": "Djibouti",
+            "Confirmed": 1072,
+            "Death": 2,
+            "Recovered": 498
+        },{
+            "name": "Cote d'Ivoire",
+            "Confirmed": 1183,
+            "Death": 14,
+            "Recovered": 525
+        },{
+            "name": "Congo (Kinshasa)", 
+            "Confirmed": 471,
+            "Death": 30,
+            "Recovered": 56
+        },{
+            "name": "Congo (Brazzaville)",
+            "Confirmed": 207,
+            "Death": 8,
+            "Recovered": 19
+        },{
+            "name": "Chad",
+            "Confirmed": 52,
+            "Death": 2,
+            "Recovered": 19
+        }, {
+            "name": "Central African Republic",
+            "Confirmed": 50,
+            "Death": 0,
+            "Recovered": 10
+        },{
+            "name": "Cameroon",
+            "Confirmed": 1705,
+            "Death": 58,
+            "Recovered": 915
+        },{
+            "name": "Cabo Verde",
+            "Confirmed": 114,
+            "Death": 1,
+            "Recovered": 2
+        },{
+            "name": "Burundi",
+            "Confirmed": 11,
+            "Death": 1,
+            "Recovered": 4
+        },{
+            "name": "Burkina Faso",
+            "Confirmed": 638,
+            "Death": 42,
+            "Recovered": 476
+        },{
+            "name": "Botswana",
+            "Confirmed": 23,
+            "Death": 1,
+            "Recovered": 0
+        },{
+            "name": "Benin",
+            "Confirmed": 64,
+            "Death": 1,
+            "Recovered": 33
+        },{
+            "name": "Angola",
+            "Confirmed": 27,
+            "Death": 2,
+            "Recovered": 6
+        },{
+            "name": "Algeria",
+            "Confirmed": 3649,
+            "Death": 437,
+            "Recovered": 1651
+        }]
+    }, {
+        "name": "Australia/Oceania",
+        "children": [{
+            "name": "Papua New Guinea",
+            "Confirmed": 8,
+            "Death": 0,
+            "Recovered": 0
+        },{
+            "name": "New Zealand",
+            "Confirmed": 1474,
+            "Death": 19,
+            "Recovered": 1229
+        },{
+            "name": "Fiji",
+            "Confirmed": 18,
+            "Death": 0,
+            "Recovered": 12
+        },{
+            "name": "Australia",
+            "children": [{
+                "name": "Western Australia",
+                "Confirmed": 550,
+                "Death": 8,
+                "Recovered": 495
+            },{
+                "name": "Victoria",
+                "Confirmed": 1354,
+                "Death": 18,
+                "Recovered": 1287
+            },{
+                "name": "Tasmania",
+                "Confirmed": 218,
+                "Death": 11,
+                "Recovered": 137
+            },{
+                "name": "South Australia",
+                "Confirmed": 438,
+                "Death": 4,
+                "Recovered": 420
+            },{
+                "name": "Queensland",
+                "Confirmed": 1034,
+                "Death": 6,
+                "Recovered": 934
+            },{
+                "name": "Northern Territory",
+                "Confirmed": 28,
+                "Death": 0,
+                "Recovered": 25
+            },{
+                "name": "New South Wales",
+                "Confirmed": 3016,
+                "Death": 39,
+                "Recovered": 2266
+            },{
+                "name": "Australian Capital Territory",
+                "Confirmed": 106,
+                "Death": 3,
+                "Recovered": 101
+            }]
+        }]
+    }, {
+        "name": "Europe",
+        "children": [{
+            "name": "United Kingdom",
+            "Confirmed": 161145,
+            "Death": 21678,
+            "Recovered": 0,            
+            "children": [{
+                "Province State": "Turks and Caicos Islands",
+                "Confirmed": 12,
+                "Death": 1,
+                "Recovered": 5
+            }, {   
+                "Province State": "Montserrat",
+                "Confirmed": 11,
+                "Death": 1,
+                "Recovered": 2
+            },{   
+                "Province State": "Isle of Man",
+                "Confirmed": 309,
+                "Death": 21,
+                "Recovered": 252
+            },{   
+                "Province State": "Gibraltar",
+                "Confirmed": 141,
+                "Death": 0,
+                "Recovered": 131
+            },{   
+                "Province State": "Falkland Islands (Malvinas)",
+                "Confirmed": 13,
+                "Death": 0,
+                "Recovered": 11
+            },{   
+                "Province State": "Channel Islands",
+                "Confirmed": 530,
+                "Death": 36,
+                "Recovered": 352
+            },{   
+                "Province State": "Cayman Islands",
+                "Confirmed": 70,
+                "Death": 1,
+                "Recovered": 10
+            },{   
+                "Province State": "British Virgin Islands",
+                "Confirmed": 6,
+                "Death": 1,
+                "Recovered": 3
+            },{   
+                "Province State": "Bermuda",
+                "Confirmed": 110,
+                "Death": 6,
+                "Recovered": 44
+            },{   
+                "Province State": "Anguilla",
+                "Confirmed": 3,
+                "Death": 0,
+                "Recovered": 3
+            }]
+        },{        
+            "name": "Ukraine",
+            "Confirmed": 9410,
+            "Death": 239,
+            "Recovered": 992
+        },{
+            "name": "Switzerland",
+            "Confirmed": 29264,
+            "Death": 1699,
+            "Recovered": 22600
+        },{
+            "name": "Sweden",
+            "Confirmed": 19621,
+            "Death": 2355,
+            "Recovered": 1005
+        },{
+            "name": "Spain",
+            "Confirmed": 232128,
+            "Death": 23822,
+            "Recovered": 123903
+        },{
+            "name": "Slovenia",
+            "Confirmed": 1408,
+            "Death": 86,
+            "Recovered": 223
+        },{
+            "name": "Slovakia",
+            "Confirmed": 1384,
+            "Death": 20,
+            "Recovered": 423
+        },{
+            "name": "Serbia",
+            "Confirmed": 6630,
+            "Death": 125,
+            "Recovered": 870
+        },{
+            "name": "San Marino",
+            "Confirmed": 553,
+            "Death": 41,
+            "Recovered": 64
+        },{
+            "name": "Russia",
+            "Confirmed": 93558,
+            "Death": 867,
+            "Recovered": 8456
+        },{
+            "name": "Romania",
+            "Confirmed": 11616,
+            "Death": 663,
+            "Recovered": 3404
+        },{
+            "name": "Portugal",
+            "Confirmed": 24322,
+            "Death": 948,
+            "Recovered": 1389
+        },{
+            "name": "Poland",
+            "Confirmed": 12218,
+            "Death": 596,
+            "Recovered": 2655
+        },{
+            "name": "Norway",
+            "Confirmed": 7660,
+            "Death": 206,
+            "Recovered": 32
+        },{
+            "name": "North Macedonia",
+            "Confirmed": 1421,
+            "Death": 71,
+            "Recovered": 589
+        },{
+            "name": "Netherlands",
+            "Confirmed": 38416,
+            "Death": 4566,
+            "Recovered":0,
+            "children": [{
+                "name": "Sint Maarten",
+                "Confirmed": 75,
+                "Death": 13,
+                "Recovered": 33
+            },{
+                "name": "Curacao",
+                "Confirmed": 16,
+                "Death": 1,
+                "Recovered": 11
+            },{
+                "name": "Bonaire, Sint Eustatius and Saba",
+                "Confirmed": 5,
+                "Death": 0,
+                "Recovered": 0
+            },{
+                "name": "Aruba",
+                "Confirmed": 100,
+                "Death": 2,
+                "Recovered": 73
+  
+            }]
+        },{
+            "name": "Montenegro",
+            "Confirmed": 321,
+            "Death": 7,
+            "Recovered": 19
+        },{
+            "name": "Monaco",
+            "Confirmed": 95,
+            "Death": 4,
+            "Recovered": 50
+        },{
+            "name": "Moldova",
+            "Confirmed": 3638,
+            "Death": 103,
+            "Recovered": 975
+        },{
+            "name": "Malta",
+            "Confirmed": 458,
+            "Death": 4,
+            "Recovered": 303
+        },{
+            "name": "Luxembourg",
+            "Confirmed": 3741,
+            "Death": 89,
+            "Recovered": 3123
+        },{
+            "name": "Lithuania",
+            "Confirmed": 1344,
+            "Death": 44,
+            "Recovered": 536
+        },{
+            "name": "Liechtenstein",
+            "Confirmed": 82,
+            "Death": 1,
+            "Recovered": 55
+        },{
+            "name": "Latvia",
+            "Confirmed": 836,
+            "Death": 13,
+            "Recovered": 267
+        },{
+            "name": "Kosovo",
+            "Confirmed": 510,
+            "Death": 12,
+            "Recovered": 93
+        },{
+            "name": "Italy",
+            "Confirmed": 201505,
+            "Death": 27359,
+            "Recovered": 68941
+        },{
+            "name": "Ireland",
+            "Confirmed": 19877,
+            "Death": 1159,
+            "Recovered": 9233
+        },{
+            "name": "Iceland",
+            "Confirmed": 1795,
+            "Death": 10,
+            "Recovered": 1636
+        },{    
+            "name": "Hungary",    
+            "Confirmed": 2649,
+            "Death": 291,
+            "Recovered": 516
+        },{
+            "name": "Greece",
+            "Confirmed": 2566,
+            "Death": 138,
+            "Recovered": 577
+        },{
+            "name": "Germany",
+            "Confirmed": 159912,
+            "Death": 6314,
+            "Recovered": 117400
+        },{
+            "name": "Georgia",
+            "Confirmed": 511,
+            "Death": 6,
+            "Recovered": 168
+        },{
+            "name": "France",
+            "Confirmed": 167605,
+            "Death": 23660,
+            "Recovered": 46886,
+            "children": [{
+                "name": "St Martin",
+                "Confirmed": 38,
+                "Death": 3,
+                "Recovered": 24
+            },{
+                "name": "Saint Pierre and Miquelon",
+                "Confirmed": 1,
+                "Death": 0,
+                "Recovered": 0
+            },{
+                "name": "Saint Barthelemy",
+                "Confirmed": 6,
+                "Death": 0,
+                "Recovered": 6
+            },{
+                "name": "Reunion",
+                "Confirmed": 418,
+                "Death": 0,
+                "Recovered": 300
+            },{
+                "name": "New Caledonia",
+                "Confirmed": 18,
+                "Death": 0,
+                "Recovered": 17
+            },{
+                "name": "Mayotte",
+                "Confirmed": 460,
+                "Death": 4,
+                "Recovered": 235
+            },{
+                "name": "Martinique",
+                "Confirmed": 175,
+                "Death": 14,
+                "Recovered": 83
+            },{
+                "name": "Guadeloupe",
+                "Confirmed": 149,
+                "Death": 12,
+                "Recovered": 82
+            },{
+                "name": "French Polynesia",
+                "Confirmed": 58,
+                "Death": 0,
+                "Recovered": 49
+            },{
+                "name": "French Guiana",
+                "Confirmed": 125,
+                "Death": 1,
+                "Recovered": 93
+            }]
+        },{
+            "name": "Finland",
+            "Confirmed": 4740,
+            "Death": 199,
+            "Recovered": 2800
+        },{
+            "name": "Estonia",
+            "Confirmed": 1660,
+            "Death": 50,
+            "Recovered": 240
+        },{
+            "name": "Denmark",
+            "Confirmed": 8851,
+            "Death": 434,
+            "Recovered": 6121,
+            "children":[{
+                "name": "Greenland",
+                "Confirmed": 11,
+                "Death": 0,
+                "Recovered": 11
+            },{
+                "name": "Faroe Islands",
+                "Confirmed": 187,
+                "Death": 0,
+                "Recovered": 181
+            }]
+        },{
+            "name": "Czechia",
+            "Confirmed": 7504,
+            "Death": 227,
+            "Recovered": 2948
+        },{
+            "name": "Cyprus",
+            "Confirmed": 837,
+            "Death": 15,
+            "Recovered": 148
+        },{
+            "name": "Croatia",
+            "Confirmed": 2047,
+            "Death": 63,
+            "Recovered": 1232
+        },{
+            "name": "Bulgaria",
+            "Confirmed": 1399,
+            "Death": 58,
+            "Recovered": 222
+        },{
+            "name": "Bosnia and Herzegovina",
+            "Confirmed": 1585,
+            "Death": 63,
+            "Recovered": 682
+        },{
+            "name": "Belgium",
+            "Confirmed": 47334,
+            "Death": 7331,
+            "Recovered": 10943
+        },{
+            "name": "Belarus",
+            "Confirmed": 12208,
+            "Death": 79,
+            "Recovered": 1993
+        },{
+            "name": "Austria",
+            "Confirmed": 15357,
+            "Death": 569,
+            "Recovered": 12580
+        },{
+            "name": "Andorra",
+            "Confirmed": 743,
+            "Death": 41,
+            "Recovered": 398
+        },{
+            "name": "Albania",
+            "Confirmed": 750,
+            "Death": 30,
+            "Recovered": 431
+  
+        }]
+    }, {
+        "name": "North America",
+        "children": [{
+            "name": "United States",
+            "Confirmed": 0,
+            "Death": 0,
+            "Recovered": 0,
+                "children": [{
+                    "name": "Wyoming",
+                    "Confirmed": 536,
+                    "Death": 7,
+                    "Recovered": 0
+                },{
+                    "name": "Wisconsin",
+                    "Confirmed": 6289,
+                    "Death": 300,
+                    "Recovered": 0
+                },{
+                    "name": "West Virginia",
+                    "Confirmed": 1095,
+                    "Death": 38,
+                    "Recovered": 0
+                },{
+                    "name": "Washington",
+                    "Confirmed": 13842,
+                    "Death": 786,
+                    "Recovered": 0
+                },{
+                    "name": "Virginia",
+                    "Confirmed": 14339,
+                    "Death": 492,
+                    "Recovered": 0
+                },{
+                    "name": "Virgin Islands",
+                    "Confirmed": 57,
+                    "Death": 4,
+                    "Recovered": 0
+                },{
+                    "name": "Vermont",
+                    "Confirmed": 862,
+                    "Death": 47,
+                    "Recovered": 0
+                },{
+                    "name": "Utah",
+                    "Confirmed": 4345,
+                    "Death": 41,
+                    "Recovered": 0
+                },{
+                    "name": "Texas",
+                    "Confirmed": 26357,
+                    "Death": 719,
+                    "Recovered": 0
+                },{
+                    "name": "Tennessee",
+                    "Confirmed": 10052,
+                    "Death": 188,
+                    "Recovered": 0
+                },{
+                    "name": "South Dakota",
+                    "Confirmed": 2313,
+                    "Death": 11,
+                    "Recovered": 0
+                },{
+                    "name": "South Carolina",
+                    "Confirmed": 5735,
+                    "Death": 192,
+                    "Recovered": 0
+                },{
+                    "name": "Rhode Island",
+                    "Confirmed": 7927,
+                    "Death": 239,
+                    "Recovered": 0
+                },{
+                    "name": "Puerto Rico",
+                    "Confirmed": 1400,
+                    "Death": 86,
+                    "Recovered": 0
+                },{
+                    "name": "Pennsylvania",
+                    "Confirmed": 45137,
+                    "Death": 2046,
+                    "Recovered": 0
+                },{
+                    "name": "Oregon",
+                    "Confirmed": 2385,
+                    "Death": 99,
+                    "Recovered": 0
+                },{
+                    "name": "Oklahoma",
+                    "Confirmed": 3410,
+                    "Death": 207,
+                    "Recovered": 0
+                },{
+                    "name": "Ohio",
+                    "Confirmed": 16769,
+                    "Death": 799,
+                    "Recovered": 0
+                },{
+                    "name": "Northern Mariana Islands",
+                    "Confirmed": 14,
+                    "Death": 2,
+                    "Recovered": 0
+                },{
+                    "name": "North Dakota",
+                    "Confirmed": 991,
+                    "Death": 19,
+                    "Recovered": 0
+                },{
+                    "name": "North Carolina",
+                    "Confirmed": 9755,
+                    "Death": 363,
+                    "Recovered": 0
+                },{
+                    "name": "New York",
+                    "Confirmed": 295106,
+                    "Death": 22912,
+                    "Recovered": 0
+                },{
+                    "name": "New Mexico",
+                    "Confirmed": 2974,
+                    "Death": 105,
+                    "Recovered": 0
+                },{
+                    "name": "New Jersey",
+                    "Confirmed": 113856,
+                    "Death": 6442,
+                    "Recovered": 0
+                },{
+                    "name": "New Hampshire",
+                    "Confirmed": 2010,
+                    "Death": 60,
+                    "Recovered": 0
+                },{
+                    "name": "Nevada",
+                    "Confirmed": 4821,
+                    "Death": 219,
+                    "Recovered": 0
+                },{
+                    "name": "Nebraska",
+                    "Confirmed": 3517,
+                    "Death": 56,
+                    "Recovered": 0
+                },{
+                    "name": "Montana",
+                    "Confirmed": 451,
+                    "Death": 15,
+                    "Recovered": 0
+                },{
+                    "name": "Missouri",
+                    "Confirmed": 7450,
+                    "Death": 330,
+                    "Recovered": 0
+                },{
+                    "name": "Mississippi",
+                    "Confirmed": 6342,
+                    "Death": 239,
+                    "Recovered": 0
+                },{
+                    "name": "Minnesota",
+                    "Confirmed": 4181,
+                    "Death": 301,
+                    "Recovered": 0
+                },{
+                    "name": "Michigan",
+                    "Confirmed": 39262,
+                    "Death": 3568,
+                    "Recovered": 0
+                },{
+                    "name": "Massachusetts",
+                    "Confirmed": 58302,
+                    "Death": 3153,
+                    "Recovered": 0
+                },{
+                    "name": "Maryland",
+                    "Confirmed": 20113,
+                    "Death": 1016,
+                    "Recovered": 0
+                },{
+                    "name": "Maine",
+                    "Confirmed": 1040,
+                    "Death": 51,
+                    "Recovered": 0
+                },{
+                    "name": "Louisiana",
+                    "Confirmed": 27286,
+                    "Death": 1801,
+                    "Recovered": 0
+                },{
+                    "name": "Kentucky",
+                    "Confirmed": 4375,
+                    "Death": 225,
+                    "Recovered": 0
+                },{
+                    "name": "Kansas",
+                    "Confirmed": 3652,
+                    "Death": 127,
+                    "Recovered": 0
+                },{
+                    "name": "Iowa",
+                    "Confirmed": 6376,
+                    "Death": 136,
+                    "Recovered": 0
+                },{
+                    "name": "Indiana",
+                    "Confirmed": 16588,
+                    "Death": 901,
+                    "Recovered": 0
+                },{
+                    "name": "Illinois",
+                    "Confirmed": 48102,
+                    "Death": 2125,
+                    "Recovered": 0
+                },{
+                    "name": "Idaho",
+                    "Confirmed": 1952,
+                    "Death": 60,
+                    "Recovered": 0
+                },{
+                    "name": "Hawaii",
+                    "Confirmed": 609,
+                    "Death": 16,
+                    "Recovered": 0
+                },{
+                    "name": "Guam",
+                    "Confirmed": 141,
+                    "Death": 5,
+                    "Recovered": 0
+                },{
+                    "name": "Grand Princess",
+                    "Confirmed": 103,
+                    "Death": 3,
+                    "Recovered": 0
+                },{
+                    "name": "Georgia",
+                    "Confirmed": 24922,
+                    "Death": 1036,
+                    "Recovered": 0
+                },{
+                    "name": "Florida",
+                    "Confirmed": 32848,
+                    "Death": 1171,
+                    "Recovered": 0
+                },{
+                    "name": "District of Columbia",
+                    "Confirmed": 3994,
+                    "Death": 190,
+                    "Recovered": 0
+                },{
+                    "name": "Diamond Princess",
+                    "Confirmed": 49,
+                    "Death": 0,
+                    "Recovered": 0
+                },{
+                    "name": "Delaware",
+                    "Confirmed": 4575,
+                    "Death": 137,
+                    "Recovered": 0
+                },{
+                    "name": "Connecticut",
+                    "Confirmed": 26312,
+                    "Death": 2087,
+                    "Recovered": 0
+                },{
+                    "name": "Colorado",
+                    "Confirmed": 14316,
+                    "Death": 736,
+                    "Recovered": 0
+                },{
+                    "name": "California",
+                    "Confirmed": 46164,
+                    "Death": 1864,
+                    "Recovered": 0
+                },{
+                    "name": "Arkansas",
+                    "Confirmed": 3127,
+                    "Death": 57,
+                    "Recovered": 0
+                },{
+                    "name": "Arizona",
+                    "Confirmed": 6955,
+                    "Death": 275,
+                    "Recovered": 0
+                },{
+                    "name": "Alaska",
+                    "Confirmed": 351,
+                    "Death": 9,
+                    "Recovered": 0
+                },{
+                    "name": "Alabama",
+                    "Confirmed": 6750,
+                    "Death": 242,
+                    "Recovered": 0
+                }]
+            },{
+                "name": "Saint Vincent and the Grenadines",
+                "Confirmed": 15,
+                "Death": 0,
+                "Recovered": 8
+            },{
+                "name": "Saint Lucia",
+                "Confirmed": 15,
+                "Death": 0,
+                "Recovered": 15
+            },{
+                "name": "Saint Kitts and Nevis",
+                "Confirmed": 15,
+                "Death": 0,
+                "Recovered": 4
+            },{
+                "name": "Panama",
+                "Confirmed": 6021,
+                "Death": 167,
+                "Recovered": 455
+            },{
+                "name": "Nicaragua",
+                "Confirmed": 13,
+                "Death": 3,
+                "Recovered": 7
+            },{
+                "name": "Mexico",
+                "Confirmed": 16752,
+                "Death": 1569,
+                "Recovered": 11423
+            },{
+                "name": "Jamaica",
+                "Confirmed": 364,
+                "Death": 7,
+                "Recovered": 29
+            },{
+                "name": "Honduras",
+                "Confirmed": 702,
+                "Death": 64,
+                "Recovered": 79
+            },{
+                "name": "Haiti",
+                "Confirmed": 76,
+                "Death": 6,
+                "Recovered": 8
+            },{
+                "name": "Guatemala",
+                "Confirmed": 530,
+                "Death": 15,
+                "Recovered": 49
+            },{
+                "name": "Grenada",
+                "Confirmed": 19,
+                "Death": 0,
+                "Recovered": 10
+            },{
+                "name": "El Salvador",
+                "Confirmed": 345,
+                "Death": 8,
+                "Recovered": 97
+            },{
+                "name": "Dominican Republic",
+                "Confirmed": 6416,
+                "Death": 286,
+                "Recovered": 1165
+            },{
+                "name": "Dominica",
+                "Confirmed": 16,
+                "Death": 0,
+                "Recovered": 13
+            },{
+                "name": "Diamond Princess",
+                "Confirmed": 712,
+                "Death": 13,
+                "Recovered": 645
+            },{
+                "name": "Cuba",
+                "Confirmed": 1437,
+                "Death": 58,
+                "Recovered": 575
+            },{
+                "name": "Costa Rica",
+                "Confirmed": 705,
+                "Death": 6,
+                "Recovered": 306
+            },{
+                "name": "Canada",
+                "children":[{
+                    "name": "Yukon",
+                    "Confirmed": 11,
+                    "Death": 0,
+                    "Recovered": 0
+                },{
+                    "name": "Saskatchewan",
+                    "Confirmed": 366,
+                    "Death": 5,
+                    "Recovered": 0
+                },{
+                    "name": "Recovered",
+                    "Confirmed": 0,
+                    "Death": 0,
+                    "Recovered": 19231
+                },{
+                    "name": "Quebec",
+                    "Confirmed": 25761,
+                    "Death": 1683,
+                    "Recovered": 0
+                },{
+                    "name": "Prince Edward Island",
+                    "Confirmed": 27,
+                    "Death": 0,
+                    "Recovered": 0
+                },{
+                    "name": "Ontario",
+                    "Confirmed": 16500,
+                    "Death": 1072,
+                    "Recovered": 0
+                },{
+                    "name": "Nova Scotia",
+                    "Confirmed": 915,
+                    "Death": 27,
+                    "Recovered": 0
+                },{
+                    "name": "Northwest Territories",
+                    "Confirmed": 5,
+                    "Death": 0,
+                    "Recovered": 0
+                },{
+                    "name": "Newfoundland and Labrador",
+                    "Confirmed": 258,
+                    "Death": 3,
+                    "Recovered": 0
+                },{
+                    "name": "New Brunswick",
+                    "Confirmed": 118,
+                    "Death": 0,
+                    "Recovered": 0
+                },{
+                    "name": "Manitoba",
+                    "Confirmed": 273,
+                    "Death": 6,
+                    "Recovered": 0
+                },{
+                    "name": "Grand Princess",
+                    "Confirmed": 13,
+                    "Death": 0,
+                    "Recovered": 0
+                },{
+                    "name": "Diamond Princess",
+                    "Confirmed": 0,
+                    "Death": 1,
+                    "Recovered": 0
+                },{
+                    "name": "British Columbia",
+                    "Confirmed": 2053,
+                    "Death": 106,
+                    "Recovered": 0
+                },{
+                    "name": "Alberta",
+                    "Confirmed": 4850,
+                    "Death": 80,
+                    "Recovered": 0
+                }]
+            },{
+                "name": "Belize",
+                "Confirmed": 18,
+                "Death": 2,
+                "Recovered": 9
+            },{
+                "name": "Barbados",
+                "Confirmed": 80,
+                "Death": 6,
+                "Recovered": 39
+            },{
+                "name": "Bahamas",
+                "Confirmed": 80,
+                "Death": 11,
+                "Recovered": 23
+            },{
+                "name": "Antigua and Barbuda",
+                "Confirmed": 24,
+                "Death": 3,
+                "Recovered": 11
+            }]
+    }, {
+        "name": "South America",
+        "children": [{
+                "name": "Venezuela",
+                "Confirmed": 329,
+                "Death": 10,
+                "Recovered": 142
+            },{
+                "name": "Uruguay",
+                "Confirmed": 625,
+                "Death": 15,
+                "Recovered": 394
+            },{
+                "name": "Trinidad and Tobago",
+                "Confirmed": 116,
+                "Death": 8,
+                "Recovered": 59
+            },{
+                "name": "Suriname",
+                "Confirmed": 10,
+                "Death": 1,
+                "Recovered": 7
+            },{
+                "name": "Peru",
+                "Confirmed": 31190,
+                "Death": 854,
+                "Recovered": 9179
+            },{
+                "name": "Paraguay",
+                "Confirmed": 239,
+                "Death": 9,
+                "Recovered": 102
+            },{
+                "name": "Guyana",
+                "Confirmed": 74,
+                "Death": 8,
+                "Recovered": 15
+            },{
+                "name": "Ecuador",
+                "Confirmed": 24258,
+                "Death": 871,
+                "Recovered": 1557
+            },{
+                "name": "Colombia",
+                "Confirmed": 5949,
+                "Death": 269,
+                "Recovered": 1268
+            },{
+                "name": "Chile",
+                "Confirmed": 14365,
+                "Death": 207,
+                "Recovered": 7710
+            },{
+                "name": "Brazil",
+                "Confirmed": 73235,
+                "Death": 5083,
+                "Recovered": 32544
+            },{
+                "name": "Bolivia",
+                "Confirmed": 1014,
+                "Death": 53,
+                "Recovered": 98
+            },{
+                "name": "Argentina",
+                "Confirmed": 4127,
+                "Death": 207,
+                "Recovered": 1162
+            }]
+     }]
+ 
+};
+
+
+//set the dimensions and margins of the diagram
+var margin = {top: 20, right: 90, bottom: 30, left: 90},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var colorScale = d3.scaleLinear()
+    .domain([0, 1])
+    .range(['red', 'green']);
+var widthScale = d3.scaleLinear()
+    .domain([1,80])
+    .range([1, 10]);
+
+// append the svg object to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate("
+          + margin.left + "," + margin.top + ")");
+
+var i = 0,
+    duration = 750,
+    root;
+
+// declares a tree layout and assigns the size
+var treemap = d3.tree().size([height, width]);
+
+// Assigns parent, children, height, depth
+root = d3.hierarchy(treeData, function(d) { return d.children; });
+root.x0 = height / 2;
+root.y0 = 0;
+
+// Collapse after the second level
+root.children.forEach(collapse);
+
+update(root);
+
+// Collapse the node and all it's children
+function collapse(d) {
+  if(d.children) {
+    d._children = d.children
+    d._children.forEach(collapse)
+    d.children = null
   }
-  
-  let generator = d3.linkVertical()
-    .x(d => d.x)
-    .y(d => d.y);
+}
 
-    myColor = d3.scaleSequential([data.height, 0], d3.interpolateViridis)
+function update(source) {
 
-  drawLinks(plot.append("g"), data.links(), generator);
-  drawNodes(plot.append("g"), data.descendants(), true)
+  // Assigns the x and y position for the nodes
+  var treeData = treemap(root);
 
-  
-  function drawLinks(g, links, generator) {
-    let paths = g.selectAll('path')
-      .data(links)
-      .enter()
-      .append('path')
-      .attr('d', generator)
-      .attr('class', 'link');
-  }
+  // Compute the new tree layout.
+  var nodes = treeData.descendants(),
+      links = treeData.descendants().slice(1);
 
-  function drawNodes(g, nodes, raise) {
-    
-    let circles = g.selectAll('circle')
-      .data(nodes, node => node.data.key)
-      .enter()
-      .append('circle')
-      .attr('r', 4)
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y)
-      .attr('id', d => d.data.key)
-      .text(function(d) {
-        return d.data.key;
-      })
+  // Normalize for fixed-depth.
+  nodes.forEach(function(d){ d.y = d.depth * 180});
+
+  // ****************** Nodes section ***************************
+
+  // Update the nodes...
+  var node = svg.selectAll('g.node')
+      .data(nodes, function(d) {return d.id || (d.id = ++i); });
+  // Enter any new modes at the parent's previous position.
+  var nodeEnter = node.enter().append('g')
       .attr('class', 'node')
-      .style('fill', d => myColor(d.depth))
-      .style('stroke', 'black')
-
-    //remove empty circles
-    let empty = circles.filter(d => (d.data.key === "")).remove()
-
-
-    setupEvents(g, circles, raise);
-  }
-
-  function setupEvents(g, selection, raise) {
-
-    function showTooltip(g, node) {
-      let gbox = g.node().getBBox(); // get bounding box of group BEFORE adding text
-      let nbox = node.node().getBBox(); // get bounding box of node
-
-      // calculate shift amount
-      let dx = nbox.width / 2;
-      let dy = nbox.height / 2;
-
-      // retrieve node attributes (calculate middle point)
-      let x = nbox.x + dx;
-      let y = nbox.y + dy;
-
-      // get data for node
-      let datum = node.datum();
-
-      // remove "java.base." from the node name
-      let name = datum.data.key;
-
-      // use node name and total size as tooltip text
-      numberFormat = d3.format(".2~s");
-      let text = `${name} (${numberFormat(datum.value)} cases)`;
-
-      // create tooltip
-      let tooltip = g.append('text')
-        .text(text)
-        .attr('x', x)
-        .attr('y', y)
-        .attr('dy', -dy - 14) // shift upward above circle
-        .attr('text-anchor', 'middle') // anchor in the middle
-        .attr('id', 'tooltip');
-
-      // get bounding box for the text
-      let tbox = tooltip.node().getBBox();
-
-      // if text will fall off left side, anchor at start
-      if (tbox.x < gbox.x) {
-        tooltip.attr('text-anchor', 'start');
-        tooltip.attr('dx', -dx); // nudge text over from center
-      }
-      // if text will fall off right side, anchor at end
-      else if ((tbox.x + tbox.width) > (gbox.x + gbox.width)) {
-        tooltip.attr('text-anchor', 'end');
-        tooltip.attr('dx', dx);
-      }
-
-      // if text will fall off top side, place below circle instead
-      if (tbox.y < gbox.y) {
-        tooltip.attr('dy', dy + tbox.height);
-      }
-    }
-
-
-    // show tooltip text on mouseover (hover)
-    selection.on('mouseover.tooltip', function(d) {
-      console.log(d);
-      let selected = d3.select(this);
-      showTooltip(g, d3.select(this));
-
-      //create a filter for only last line of circles
-      if (d.height === 0 || d.height === 1) {
-        selection.filter(e => (d.data.key !== e.data.key))
-          .transition()
-          .duration(400)
-          .attr("fill-opacity", "0.2")
-          .style("stroke", "")
-      }
+      .attr("transform", function(d) {
+        return "translate(" + source.y0 + "," + source.x0 + ")";
     })
+    .on('click', click)
+    .on("mouseover", function(d) {
+          var g = d3.select(this); // The node
+          // The class is used to remove the additional text later
+          var info = g.append('text')
+             .classed('info', true)
+             .attr('x', 400)
+             .attr('y', 0)
+             .text(function(d) { return "Confirmed: " + d.data.Confirmed + "Death: " + d.data.Death; })
+      })
+      .on("mouseout", function() {
+          // Remove the info text on mouse out.
+          d3.select(this).select('text.info').remove()
+        });
+    ;
+  // Define the div for the tooltip
+var div = d3.select("body").append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 0);
 
-    // remove tooltip text on mouseout
-    selection.on('mouseout.tooltip', function(d) {
-      selection
-        .transition()
-        .attr("fill-opacity", "1")
-        .style('stroke', 'black');
-      g.select("#tooltip").remove();
-    });
+
+  // Add Circle for the nodes
+  nodeEnter.append('circle')
+      .attr('class', 'node')
+      .attr('r', 1e-6)
+      .style("fill", function(d) {
+          return d._children ? "lightsteelblue" : "grey";
+      })
+      .style("stroke", function(d){return colorScale(d.data.female/(d.data.female + d.data.male))});
+
+  // Add labels for the nodes
+  nodeEnter.append('text')
+      .attr("dy", ".35em")
+      .attr("x", function(d) {
+          return d.children || d._children ? -13 : 13;
+      })
+      .attr("text-anchor", function(d) {
+          return d.children || d._children ? "end" : "start";
+      })
+      .text(function(d) { return d.data.name; })
+      .style("fill", function(d){return colorScale(d.data.female/(d.data.value))});
+
+  // UPDATE
+  var nodeUpdate = nodeEnter.merge(node);
+
+  // Transition to the proper position for the node
+  nodeUpdate.transition()
+    .duration(duration)
+    .attr("transform", function(d) { 
+        return "translate(" + d.y + "," + d.x + ")";
+     });
+
+  // Update the node attributes and style
+  nodeUpdate.select('circle.node')
+    .attr('r', 3)
+    .style("fill", function(d) {
+        return d._children ? "lightsteelblue" : "grey";
+    })
+    .attr('cursor', 'pointer');
+
+
+  // Remove any exiting nodes
+  var nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) {
+          return "translate(" + source.y + "," + source.x + ")";
+      })
+      .remove();
+
+  // On exit reduce the node circles size to 0
+  nodeExit.select('circle')
+    .attr('r', 3);
+
+  // On exit reduce the opacity of text labels
+  nodeExit.select('text')
+    .style('fill-opacity', 1e-6);
+
+  // ****************** links section ***************************
+
+  // Update the links...
+  var link = svg.selectAll('path.link')
+      .data(links, function(d) { return d.id; })
+      .style('stroke-width', function(d){
+        return widthScale(d.data.value)
+      });
+
+  // Enter any new links at the parent's previous position.
+  var linkEnter = link.enter().insert('path', "g")
+      .attr("class", "link")
+      .attr('d', function(d){
+        var o = {x: source.x0, y: source.y0}
+        return diagonal(o, o)
+      })
+      .style('stroke-width', function(d){
+        return widthScale(d.data.value)
+      });
+
+  // UPDATE
+  var linkUpdate = linkEnter.merge(link);
+
+  // Transition back to the parent element position
+  linkUpdate.transition()
+      .duration(duration)
+      .attr('d', function(d){ return diagonal(d, d.parent) });
+
+  // Remove any exiting links
+  var linkExit = link.exit().transition()
+      .duration(duration)
+      .attr('d', function(d) {
+        var o = {x: source.x, y: source.y}
+        return diagonal(o, o)
+      })
+      .style('stroke-width', function(d){
+        return widthScale(d.data.value)
+      })
+      .remove();
+
+  // Store the old positions for transition.
+  nodes.forEach(function(d){
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+
+  // Creates a curved (diagonal) path from parent to the child nodes
+  function diagonal(s, d) {
+
+    path = `M ${s.y} ${s.x}
+            C ${(s.y + d.y) / 2} ${s.x},
+              ${(s.y + d.y) / 2} ${d.x},
+              ${d.y} ${d.x}`
+
+    return path
   }
 
-  ///add legend
-  //add color circles
-  svg.append("circle")
-    .attr("cx", width - 350)
-    .attr("cy", height - 200)
-    .attr("r", 4)
-    .style("fill", "rgb(68, 1, 84)")
-    .style("stroke", "black")
-  svg.append("circle")
-    .attr("cx", width - 350)
-    .attr("cy", height - 250)
-    .attr("r", 4)
-    .style("fill", "rgb(49, 104, 142)")
-    .style("stroke", "black")
-  svg.append("circle")
-    .attr("cx", width - 350)
-    .attr("cy", height - 300)
-    .attr("r", 4)
-    .style("fill", "rgb(53, 183, 121)")
-    .style("stroke", "black")
-  svg.append("circle")
-    .attr("cx", width - 350)
-    .attr("cy", height - 350)
-    .attr("r", 4)
-    .style("fill", "rgb(253, 231, 37)")
-    .style("stroke", "black")
+  // Toggle children on click.
+  function click(d) {
+    if (d.children) {
+        d._children = d.children;
+        d.children = null;
+      } else {
+        d.children = d._children;
+        d._children = null;
+      }
+    update(d);
+  }
+}
 
-  //add text
-  svg.append("text")
-    .attr("class", "legend-text")
-    .attr("x", width - 330)
-    .attr("y", height - 200)
-    .text("Call Final Disposition")
-    .attr("alignment-baseline", "middle")
-  svg
-    .append("text")
-    .attr("class", "legend-text")
-    .attr("x", width - 330)
-    .attr("y", height - 250)
-    .text("Call Type")
-    .attr("alignment-baseline", "middle")
-  svg
-    .append("text")
-    .attr("class", "legend-text")
-    .attr("x", width - 330)
-    .attr("y", height - 300)
-    .text("Call Type Group")
-    .attr("alignment-baseline", "middle")
-  svg
-    .append("text")
-    .attr("class", "legend-text")
-    .attr("x", width - 330)
-    .attr("y", height - 350)
-    .text("City")
-    .attr("alignment-baseline", "middle")
-})
-  </script>
-
-<!-- Page footer -->
-  <!-- https://bulma.io/documentation/layout/footer/ -->
-  <footer class="footer">
-    <div class="content has-text-centered is-size-7">
-      <p>
-        <a href="#top">
-          <span class="fas fa-arrow-up"></span>
-          <span class="has-text-weight-medium">Back to Top</span>
-        </a>
-      </p>
-
-      <p>
-        <!-- TODO: Change to link to your Github repository -->
-        <a href="https://github.com/usf-cs360-spring2020/template-bulma" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
-          <i class="fab fa-github-alt"></i>&nbsp;<strong>Github</strong>
-        </a>
-
-        <a href="https://fontawesome.com/" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
-          <i class="fab fa-font-awesome"></i>&nbsp;<strong>FontAwesome</strong>
-        </a>
-
-        <a href="https://bulma.io" class="button is-small">
-          <img src="https://bulma.io/images/made-with-bulma--semiblack.png" alt="Made with Bulma" width="128" height="24">
-        </a>
-      </p>
-    </div>
-  </footer>
-  <!-- End page footer -->
-
-  <!-- Mobile menu responsiveness -->
-  <!-- https://bulma.io/documentation/components/navbar/ -->
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-    if ($navbarBurgers.length > 0) {
-      $navbarBurgers.forEach( el => {
-        el.addEventListener('click', () => {
-          const target = el.dataset.target;
-          const $target = document.getElementById(target);
-          el.classList.toggle('is-active');
-          $target.classList.toggle('is-active');
-        });
-      });
-    }
-  });
-  </script>
-  <!-- End mobile menu responsiveness -->
-
-
-
-</html>
+</script>
+</body>

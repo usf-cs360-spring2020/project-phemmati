@@ -1,0 +1,346 @@
+<script src="//d3js.org/d3.v5.min.js"></script>
+<script>
+
+
+d3.csv("treeMap.csv").then(create);
+
+function create(d){
+    console.log(d);
+
+    let width = 960;
+    let height = 500;
+    let pad = 140;
+    let diameter = 700;
+
+    // setup svg width and height
+    let svg = d3.select("body").select("svg#nodelink")
+      .style("width", width)
+      .style("height", height);
+
+    let plot = svg.append("g")
+      .attr("id", "plot")
+      .attr("transform", translate(pad + 300, pad + 100)); 
+
+    let data = d3.nest()
+      .key(function(d) {
+        return d["root"];
+      })
+      .key(function(d) {
+        return d["Continents"]
+      })
+      .key(function(d) {
+        return d["Country"]
+      })
+      .key(function(d) {
+        return d["Province"]
+      })
+      .key(function(d) {
+        return d["Confirmed"]
+      })
+      .rollup(function(v) {
+        return v.length;
+      })
+      .entries(d);
+
+    console.log("hierarchy", data);
+
+
+    let hierarchy = d3.hierarchy(data[0], function(d) {
+      return d.values;
+    });
+
+    drawtreemap(hierarchy);
+
+    hierarchy.count()
+    hierarchy.sum(d => d.value);
+
+    hierarchy.sort(function(a, b) {
+      return b.height - a.height || b.count - a.count;
+    });
+
+    console.log(hierarchy)
+
+    let layout = d3.cluster().size([2 * Math.PI, (diameter / 2) - pad]);
+
+    layout(hierarchy);
+
+    hierarchy.each(function(node) {
+      node.theta = node.x;
+      node.radial = node.y;
+
+      let point = toCartesian(node.radial, node.theta);
+      node.x = point.x;
+      node.y = point.y;
+    });
+
+
+    let generator = d3.linkRadial()
+      .angle(d => d.theta + Math.PI / 2) 
+      .radius(d => d.radial);
+
+    color = d3.scaleSequential([hierarchy.height, 0], d3.interpolateCividis);
+
+  drawLinks(plot.append("g"), hierarchy.links(), generator);
+  drawNodes(plot.append("g"), hierarchy.descendants(), true);
+
+
+function drawtreemap(hierarchy){
+
+  let pad1 = 80;
+
+  let svg1 = d3.select("body").select("svg#tree")
+      .style("width", width)
+      .style("height", height);
+
+    let plot1 = svg1.append("g")
+      .attr("id", "plot")
+      .attr("transform", translate(20, 20)); 
+
+  hierarchy.sort(function(a, b) {
+      return b.height - a.height || b.count - a.count;
+    });
+
+
+    hierarchy.sum(d => d.value);
+
+    color = d3.scaleSequential([hierarchy.height, 0], d3.interpolateCividis);
+    console.log(hierarchy)
+
+    let layout = d3.treemap().padding(5).size([width - 1 * pad1, height - 1 * pad1]);
+
+    layout(hierarchy);
+
+    let rects = plot1.selectAll("rect")
+    .data(hierarchy.descendants())
+    .enter()
+    .append("rect")
+    .attr("x", function(d) {  return d.x0; })
+    .attr("y", function(d) { return d.y0; })
+    .attr("width", function(d) { return d.x1 - d.x0; })
+    .attr("height", function(d) { return d.y1 - d.y0; })
+    .attr("id", function(d) { return d.data.key; })
+    .attr("class", "node")
+    .style("fill", function(d) {return color(d.depth)});
+
+
+ setupEvents(plot1, rects, false);
+
+}
+
+function translate(x, y) {
+    return 'translate(' + String(x) + ',' + String(y) + ')';
+}
+
+function toCartesian(r, theta) {
+  return {
+    x: r * Math.cos(theta),
+    y: r * Math.sin(theta)
+  };
+}
+
+function drawLinks(g, links, generator) {
+  let paths = g.selectAll('path')
+    .data(links)
+    .enter()
+    .append('path')
+    .attr('d', generator)
+    .attr('class', 'link');
+}
+
+function drawNodes(g, nodes, raise) {
+  let circles = g.selectAll('circle')
+    .data(nodes, node => node.data.key)
+      .enter()
+      .append('circle')
+      .attr('r', 5)
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y)
+      .attr('id',function(d) {
+
+        if(d.data.key == ""){
+          d.data.key  = "Undef";
+        }
+
+        return d.data.key;
+      })
+      .attr('class', 'node')
+      .style('fill', d => color(d.depth))
+      .style('stroke', 'black')
+
+  
+  setupEvents(g, circles, raise);
+}
+
+function setupEvents(g, selection, raise) {
+
+
+  selection.on('mouseover.highlight', function(d) {
+    // https://github.com/d3/d3-hierarchy#node_path
+    // returns path from d3.select(this) node to selection.data()[0] root node
+
+    let path = d3.select(this).datum().path(selection.data()[0]);
+
+    console.log(path)
+
+    // select all of the nodes on the shortest path
+    let update = selection.data(path, node => node.x && node.y);
+
+    console.log(update);
+
+    // highlight the selected nodes
+    update.classed('selected', true);
+    
+    if (raise) {
+      update.raise();
+    }
+
+    selection.filter(function(item) {
+  return !path.includes(item);})
+        .transition()
+        .duration(500)
+        .attr("fill-opacity", "0.1")
+        .style("stroke", "")
+    
+
+
+  });
+  
+  selection.on('mouseout.highlight', function(d) {
+    let path = d3.select(this).datum().path(selection.data()[0]);
+    let update = selection.data(path, node => node.x && node.y);
+    update.classed('selected', false);
+
+    selection
+      .transition()
+      .attr("fill-opacity", "1")
+      .style('stroke', 'black');
+  });
+  
+
+  function showTooltip(g, node) {
+    let gbox = g.node().getBBox(); // get bounding box of group BEFORE adding text
+    let nbox = node.node().getBBox(); // get bounding box of node
+
+    // calculate shift amount
+    let dx = nbox.width / 2;
+    let dy = nbox.height / 2;
+
+    // retrieve node attributes (calculate middle point)
+    let x = nbox.x + dx;
+    let y = nbox.y + dy;
+
+    // get data for node
+    let datum = node.datum();
+
+    // remove "java.base." from the node name
+    let name = datum.data.key;
+
+    // use node name and total size as tooltip text
+    numberFormat = d3.format(".2~s");
+    let text = `${name} (${numberFormat(datum.value)} call)`;
+
+    // create tooltip
+    let tooltip = g.append('text')
+      .text(text)
+      .attr('x', x)
+      .attr('y', y)
+      .attr('dy', -dy - 4) // shift upward above circle
+      .attr('text-anchor', 'middle') // anchor in the middle
+      .attr('id', 'tooltip');
+
+    // get bounding box for the text
+    let tbox = tooltip.node().getBBox();
+
+    // if text will fall off left side, anchor at start
+    if (tbox.x < gbox.x) {
+      tooltip.attr('text-anchor', 'start');
+      tooltip.attr('dx', -dx); // nudge text over from center
+    }
+    // if text will fall off right side, anchor at end
+    else if ((tbox.x + tbox.width) > (gbox.x + gbox.width)) {
+      tooltip.attr('text-anchor', 'end');
+      tooltip.attr('dx', dx);
+    }
+
+    // if text will fall off top side, place below circle instead
+    if (tbox.y < gbox.y) {
+      tooltip.attr('dy', dy + tbox.height);
+    }
+  }
+
+
+  // show tooltip text on mouseover (hover)
+  selection.on('mouseover.tooltip', function(d) {
+    console.log(d);
+    showTooltip(g, d3.select(this));
+
+  })
+
+  // remove tooltip text on mouseout
+  selection.on('mouseout.tooltip', function(d) {
+    g.select("#tooltip").remove();
+  });
+  }
+
+
+
+ //legend
+  svg.append("circle")
+  .attr("cx", width - 200)
+  .attr("cy", height - 120)
+  .attr("r", 5)
+  .style("fill", color(3))
+  .style("stroke", "black")
+
+  svg.append("circle")
+  .attr("cx", width - 200)
+  .attr("cy", height - 140)
+  .attr("r", 5)
+  .style("fill",  color(2))
+  .style("stroke", "black")
+
+  svg.append("circle")
+  .attr("cx", width - 200)
+  .attr("cy", height - 160)
+  .attr("r", 5)
+  .style("fill",  color(1))
+  .style("stroke", "black")
+  
+  svg.append("circle")
+  .attr("cx", width - 200)
+  .attr("cy", height - 180)
+  .attr("r", 5)
+  .style("fill", color(0))
+  .style("stroke", "black")
+
+  //add text
+  svg.append("text")
+  .attr("class", "legend-text")
+  .attr("x", width - 180)
+  .attr("y", height - 120)
+  .text("Unit Type")
+  .attr("alignment-baseline", "middle")
+  svg
+  .append("text")
+  .attr("class", "legend-text")
+  .attr("x", width - 180)
+  .attr("y", height - 140)
+  .text("Call Type")
+  .attr("alignment-baseline", "middle")
+  svg
+  .append("text")
+  .attr("class", "legend-text")
+  .attr("x", width - 180)
+  .attr("y", height - 160)
+  .text("Call Type Group")
+  .attr("alignment-baseline", "middle")
+  svg
+  .append("text")
+  .attr("class", "legend-text")
+  .attr("x", width - 180)
+  .attr("y", height - 180)
+  .text("City")
+  .attr("alignment-baseline", "middle")
+}
+
+</script>
