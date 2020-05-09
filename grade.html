@@ -14,19 +14,68 @@
 
     <!-- Load Font Awesome 5 (free) icons -->
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+    <style>
+   
+   body, html {
+    height: 100%;
+}
+
+/* The hero image */
+.hero-image {
+  /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+  background-image: url("covid2.jpg");
+
+  /* Set a specific height */
+  height: 50%;
+
+  /* Position and center the image to scale nicely on all screens */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+/* Place text in the middle of the image */
+.hero-body {
+  text-align: center !important;
+  position: relative;
+  top: 50%;
+  right: 20%;
+  font-size: 2pt;
+  
+}
+.title1 {
+    color: black !important;
+    text-shadow: 2px 2px white;
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.125;
+}
+
+.subtitle1 {
+    color: black !important;
+    text-shadow: 1px 1px white;
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.25;
+}
+  </style>
   </head>
+
+  
 
   <body>
 
   <!-- Page header -->
   <!-- https://bulma.io/documentation/layout/hero/ -->
-  <section class="hero is-info is-bold">
+  <section class="hero-image">
     <div class="hero-body">
       <div class="container">
         <!-- TODO: Change title -->
-        <h1 class="title">How is Covid-19 for Top 10 Infected Regions</h1>
+        <h1 class="title1">What Is The Death Rate of Covid-19 for Different Regions?</h1>
         <!-- TODO: Change subtitle -->
-        <h2 class="subtitle">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
+        <h2 class="subtitle1">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
       </div>
     </div>
   </section>
@@ -68,7 +117,16 @@
             <div class="navbar-dropdown">
               <a href="line.html" class="navbar-item">
                 <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>Line Chart</span>
+                <span>Alpha Release</span>
+              </a>
+
+              <a href="treeMap.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Beta Release</span>
+              </a>
+              <a href="tree.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Final Release</span>
               </a>
               
               
@@ -93,6 +151,7 @@
     </div>
   </nav>
   <!-- End page navigation -->
+
 
 <body>
   <section class="section">
@@ -126,11 +185,7 @@
                   <td>A</td>
                   <td><i class="has-text-success fas fa-check-circle"></i></td>
                   <td>
-                    <p>This grade requirements has been successfully completed as:</p>
-                    <ul>
-                      <li>Modifying Alpha release to have different pages.</li>
-                      
-                    </ul>
+                    <p>This grade requirements has been successfully completed.</p>
                   </td>
                 </tr>
       

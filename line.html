@@ -1,33 +1,88 @@
 <!DOCTYPE html>
-<head>
-<meta charset="utf-8">
-<title>Line Chart</title>
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- TODO: Change title -->
+    <title>Alpha Release</title>
+
+    <!-- Load Bulma from CDN (consider saving it to repository instead) -->
+    <!-- https://bulma.io/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
 
     <!-- Load Font Awesome 5 (free) icons -->
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-</head>
-<style>
-	.bar {
-	  fill: purple;
-	}
 
-	.bar:hover {
-	  fill: brown;
-	}
-</style>
+    <style>
+   
+   body, html {
+    height: 100%;
+}
 
-<body>
+/* The hero image */
+.hero-image {
+  /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+  background-image: url("covid1.jpg");
 
-<!-- Page header -->
+  /* Set a specific height */
+  height: 50%;
+
+  /* Position and center the image to scale nicely on all screens */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+/* Place text in the middle of the image */
+.hero-body {
+  text-align: center !important;
+  position: relative;
+  top: 50%;
+  right: 20%;
+  font-size: 2pt;
+  
+}
+.title1 {
+    color: white !important;
+    text-shadow: 2px 2px black;
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.125;
+}
+
+.subtitle1 {
+    color: white !important;
+    text-shadow: 1px 1px black;
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.25;
+}
+.bar {
+    fill: purple;
+  }
+
+  .bar:hover {
+    fill: brown;
+  }
+  </style>
+  </head>
+
+  
+
+  <body>
+
+  <!-- Page header -->
   <!-- https://bulma.io/documentation/layout/hero/ -->
-  <section class="hero is-info is-bold">
+  <section class="hero-image">
     <div class="hero-body">
       <div class="container">
         <!-- TODO: Change title -->
-        <h1 class="title">How is Covid-19 for Top 10 Infected Regions</h1>
+        <h1 class="title1">What Is The Death Rate of Covid-19 for Different Regions?</h1>
         <!-- TODO: Change subtitle -->
-        <h2 class="subtitle">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
+        <h2 class="subtitle1">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
       </div>
     </div>
   </section>
@@ -69,9 +124,18 @@
             <div class="navbar-dropdown">
               <a href="line.html" class="navbar-item">
                 <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>Line Chart</span>
+                <span>Alpha Release</span>
               </a>
-            
+
+              <a href="treeMap.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Beta Release</span>
+              </a>
+              <a href="tree.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Final Release</span>
+              </a>
+              
               
             </div>
           </div>
@@ -94,6 +158,8 @@
     </div>
   </nav>
   <!-- End page navigation -->
+
+
 <body>
   <section class="section">
     <div class="container content">
@@ -127,50 +193,6 @@
       
   
 
-      
-       <h2 id="about">About</h2>
-
-        <!-- Profile box -->
-        <!-- https://bulma.io/documentation/layout/media-object/ -->
-        <article class="media">
-          <!-- TODO: Replace with profile photo -->
-          <figure class="media-left">
-            <p class="image is-128x128" ><img class="is-rounded" src="parisa.jpg"></p>
-          </figure>
-
-          <div class="media-content">
-            <div class="content">
-              <!-- TODO: Replace with contact information -->
-              <p>
-                <strong>Parisa Hemmati</strong><br/>
-                CS Major, <a href="https://www.usfca.edu/">University of San Francisco</a><br/>
-                <em>Expected Graduation: May 2022</em><br/>
-                <i class="fas fa-envelope"></i> <a href="mailto:username@dons.usfca.edu">Phemmati@dons.usfca.edu</a>
-              </p>
-
-              <!-- TODO: Replace with brief biography -->
-              <p>
-                I am a Computer Science graduate student with experience on Wireless protocol development. Beside programming enthusiast, I am a globetrotter who loves to travel to different part of the world. I have traveled to more than 30 countries up to now and still counting. Reading books and playing piano are my hobbies.
-              </p>
-
-              <!-- TODO: Replace or remove tags -->
-              <!-- https://bulma.io/documentation/elements/tag/ -->
-              <div class="heading">Skills</div>
-
-              <div class="tags">
-                <span class="tag">Python</span>
-                <span class="tag">C</span>
-                <span class="tag">Java</span>
-                <span class="tag">JavaScript</span>
-                <span class="tag">HTML</span>
-                <span class="tag">CSS</span>
-                <span class="tag">Tableau</span>
-                <span class="tag">Node.js</span>
-              </div>
-            </div>
-          </div>
-        </article>
-        <!-- End profile box -->
     </div>
   </section>
   

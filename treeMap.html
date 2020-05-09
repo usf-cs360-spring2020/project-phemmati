@@ -1,346 +1,272 @@
-<script src="//d3js.org/d3.v5.min.js"></script>
-<script>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-d3.csv("treeMap.csv").then(create);
+    <!-- TODO: Change title -->
+    <title>Beta Release</title>
 
-function create(d){
-    console.log(d);
+    <!-- Load Bulma from CDN (consider saving it to repository instead) -->
+    <!-- https://bulma.io/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
 
-    let width = 960;
-    let height = 500;
-    let pad = 140;
-    let diameter = 700;
+    <!-- Load Font Awesome 5 (free) icons -->
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <!-- load the d3.js library --> 
+    <script src="https://d3js.org/d3.v5.min.js"></script>
 
-    // setup svg width and height
-    let svg = d3.select("body").select("svg#nodelink")
-      .style("width", width)
-      .style("height", height);
-
-    let plot = svg.append("g")
-      .attr("id", "plot")
-      .attr("transform", translate(pad + 300, pad + 100)); 
-
-    let data = d3.nest()
-      .key(function(d) {
-        return d["root"];
-      })
-      .key(function(d) {
-        return d["Continents"]
-      })
-      .key(function(d) {
-        return d["Country"]
-      })
-      .key(function(d) {
-        return d["Province"]
-      })
-      .key(function(d) {
-        return d["Confirmed"]
-      })
-      .rollup(function(v) {
-        return v.length;
-      })
-      .entries(d);
-
-    console.log("hierarchy", data);
-
-
-    let hierarchy = d3.hierarchy(data[0], function(d) {
-      return d.values;
-    });
-
-    drawtreemap(hierarchy);
-
-    hierarchy.count()
-    hierarchy.sum(d => d.value);
-
-    hierarchy.sort(function(a, b) {
-      return b.height - a.height || b.count - a.count;
-    });
-
-    console.log(hierarchy)
-
-    let layout = d3.cluster().size([2 * Math.PI, (diameter / 2) - pad]);
-
-    layout(hierarchy);
-
-    hierarchy.each(function(node) {
-      node.theta = node.x;
-      node.radial = node.y;
-
-      let point = toCartesian(node.radial, node.theta);
-      node.x = point.x;
-      node.y = point.y;
-    });
-
-
-    let generator = d3.linkRadial()
-      .angle(d => d.theta + Math.PI / 2) 
-      .radius(d => d.radial);
-
-    color = d3.scaleSequential([hierarchy.height, 0], d3.interpolateCividis);
-
-  drawLinks(plot.append("g"), hierarchy.links(), generator);
-  drawNodes(plot.append("g"), hierarchy.descendants(), true);
-
-
-function drawtreemap(hierarchy){
-
-  let pad1 = 80;
-
-  let svg1 = d3.select("body").select("svg#tree")
-      .style("width", width)
-      .style("height", height);
-
-    let plot1 = svg1.append("g")
-      .attr("id", "plot")
-      .attr("transform", translate(20, 20)); 
-
-  hierarchy.sort(function(a, b) {
-      return b.height - a.height || b.count - a.count;
-    });
-
-
-    hierarchy.sum(d => d.value);
-
-    color = d3.scaleSequential([hierarchy.height, 0], d3.interpolateCividis);
-    console.log(hierarchy)
-
-    let layout = d3.treemap().padding(5).size([width - 1 * pad1, height - 1 * pad1]);
-
-    layout(hierarchy);
-
-    let rects = plot1.selectAll("rect")
-    .data(hierarchy.descendants())
-    .enter()
-    .append("rect")
-    .attr("x", function(d) {  return d.x0; })
-    .attr("y", function(d) { return d.y0; })
-    .attr("width", function(d) { return d.x1 - d.x0; })
-    .attr("height", function(d) { return d.y1 - d.y0; })
-    .attr("id", function(d) { return d.data.key; })
-    .attr("class", "node")
-    .style("fill", function(d) {return color(d.depth)});
-
-
- setupEvents(plot1, rects, false);
-
+    <style>
+   
+   body, html {
+    height: 100%;
 }
 
-function translate(x, y) {
-    return 'translate(' + String(x) + ',' + String(y) + ')';
+/* The hero image */
+.hero-image {
+  /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+  background-image: url("covid8.jpg");
+
+  /* Set a specific height */
+  height: 50%;
+
+  /* Position and center the image to scale nicely on all screens */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
 }
 
-function toCartesian(r, theta) {
-  return {
-    x: r * Math.cos(theta),
-    y: r * Math.sin(theta)
-  };
+/* Place text in the middle of the image */
+.hero-body {
+  text-align: center !important;
+  position: relative;
+  top: 50%;
+  right: 20%;
+  font-size: 2pt;
+  
+}
+.title1 {
+    color: black !important;
+    text-shadow: 2px 2px white;
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.125;
 }
 
-function drawLinks(g, links, generator) {
-  let paths = g.selectAll('path')
-    .data(links)
-    .enter()
-    .append('path')
-    .attr('d', generator)
-    .attr('class', 'link');
+.subtitle1 {
+    color: black !important;
+    text-shadow: 1px 1px white;
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.25;
 }
 
-function drawNodes(g, nodes, raise) {
-  let circles = g.selectAll('circle')
-    .data(nodes, node => node.data.key)
-      .enter()
-      .append('circle')
-      .attr('r', 5)
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y)
-      .attr('id',function(d) {
-
-        if(d.data.key == ""){
-          d.data.key  = "Undef";
-        }
-
-        return d.data.key;
-      })
-      .attr('class', 'node')
-      .style('fill', d => color(d.depth))
-      .style('stroke', 'black')
+  </style>
+  </head>
 
   
-  setupEvents(g, circles, raise);
-}
 
-function setupEvents(g, selection, raise) {
+  <body>
+
+  <!-- Page header -->
+  <!-- https://bulma.io/documentation/layout/hero/ -->
+  <section class="hero-image">
+    <div class="hero-body">
+      <div class="container">
+        <!-- TODO: Change title -->
+        <h1 class="title1">What Is The Death Rate of Covid-19 for Different Regions?</h1>
+        <!-- TODO: Change subtitle -->
+        <h2 class="subtitle1">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
+      </div>
+    </div>
+  </section>
+  <!-- End page header -->
+
+  <!-- Page navigation -->
+  <!-- https://bulma.io/documentation/components/navbar/ -->
+  <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <!-- TODO: Change link to repository homepage if needed -->
+        <!-- TODO: Change which navbar-item is-active if needed -->
+        <a class="navbar-item is-active" href="index.html">
+          <span class="icon"><i class="fas fa-home"></i></span>
+          <span>Home</span>
+        </a>
+
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="main-menu" class="navbar-menu has-text-weight-medium">
+        <!-- Left navbar items -->
+        <div class="navbar-start">
+          <a class="navbar-item" href="data.html" title="Data">
+            <span class="icon"><i class="fas fa-table"></i></span>
+            <span>Data</span>
+          </a>
+
+          <!-- TODO: Modify or remove dropdown -->
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Visualizations
+            </a>
+
+            <div class="navbar-dropdown">
+              <a href="line.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Alpha Release</span>
+              </a>
+
+              <a href="treeMap.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Beta Release</span>
+              </a>
+              <a href="tree.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Final Release</span>
+              </a>
+              
+              
+            </div>
+          </div>
+        </div>
+
+        <!-- Right navbar items -->
+        <div class="navbar-end">
+          <!-- TODO: Update as needed -->
+          <a class="navbar-item" href="grade.html" title="About">
+            <span class="icon"><i class="fas fa-tasks"></i></span>
+            <span>Grade</span>
+          </a>
+
+          <a class="navbar-item" href="about.html" title="About">
+            <span class="icon"><i class="fas fa-info-circle"></i></span>
+            <span>About</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- End page navigation -->
 
 
-  selection.on('mouseover.highlight', function(d) {
-    // https://github.com/d3/d3-hierarchy#node_path
-    // returns path from d3.select(this) node to selection.data()[0] root node
+<body>
+  <section class="section">
+    <div class="container content">
+      <h1>Which Countries Are Among The Top 10 Infected Countries</h1><br>
 
-    let path = d3.select(this).datum().path(selection.data()[0]);
-
-    console.log(path)
-
-    // select all of the nodes on the shortest path
-    let update = selection.data(path, node => node.x && node.y);
-
-    console.log(update);
-
-    // highlight the selected nodes
-    update.classed('selected', true);
-    
-    if (raise) {
-      update.raise();
-    }
-
-    selection.filter(function(item) {
-  return !path.includes(item);})
-        .transition()
-        .duration(500)
-        .attr("fill-opacity", "0.1")
-        .style("stroke", "")
+      
+     <h6>Tableau Prototypes:</h6>
+      
+      <figure class="media-left">
+            <p class="image is-960x500"><img src="treeMapConfirmed.jpg"></p>
+            <p class="image is-960x500"><img src="treeMapDeath.jpg"></p>
+          </figure>
     
 
+   
 
-  });
+<h3>Instruction</h3>
+
+<p>
+        The plots shows total number of confirmed and death cases in Top 10 regions starting from January 2019 towards mid-April of 2020. 
+      </p>
+
+      <h3>Data Wrangling</h3>
+
+
+      <p>
+        Original dataset has been used for this visualization where Country/Region, Deaths and Date columns have been used. 
+
+      </p>
+
+      <h3>Conclusion</h3>
+
+      <p>Confirmed coronavirus cases in the <b>US</b> increased significantly in the third week of March as testing was made more rapid and overtook China’s on 26 March making the US the world’s most affected country by coronavirus currently, by number of cases.</p>
+
+      <p>The US COVID-19 cases earlier crossed South Korean cases on 19 March, moving beyond 33,500 on 23 March, and surging to more than 240,000 on 02 April, while the death toll too increased sharply past 5,800.</p>
+
+      <p>Community spread and delayed testing has been a major concern to Americans as enough test kits are not available across states, while shortage of ventilators continues to result in increased deaths.</p>
+
+      <p>Coronavirus continues to be severe in <b>Italy</b>, making it the most-affected in Europe as well as outside Asia. Italy has witnessed the highest number of deaths due to COVID-19 in the world. Travel to Italy and Italians travelling to other countries during the outbreak has been traced to have caused COVID-19 spread.</p>
+
+      <p><b>Spain</b> overtook South Korea in the number of coronavirus cases in the third week of March and China at the end of March. Since the confirmation of first coronavirus case in Spain on 01 February, the Spanish COVID-19 nCoV-infected cases got closer to 1,000 in early hours of 09 March and rose sharply to more than 112,000 on 02 April. A minister in Spain contracted coronavirus, while Princess Maria Teresa died from coronavirus marking the first royal death due to COVID-19.</p>
+
+      <p>Spain is currently the second most-affected European country with coronavirus. Spanish coronavirus death toll too has increased sharply to cross 10,300. A nation-wide lock-down has been announced affecting millions of its residents.</p>
+
+
+      <p>Coronavirus cases in <b>Germany</b>, which borders France and Switzerland, have crossed 84,700 overtaking the cases in China. Similar to its neighbour France, Germany too banned public events involving huge crowds in order to prevent spread. Trade fair, The Hannover Messe, has been postponed due to the coronavirus outbreak situation.</p>
+
+      <p><b>China</b> witnessed more than 3,000 deaths and approximately 74% of the global coronavirus cases as of 09 March, which quickly came down to 58% by 13 March and to 40% by 18 March as the number of cases in rest of the world surged and Europe became the new epicentre. Within a week, coronavirus cases in the rest of the world belittled China’s. By the end of March, Chinese coronavirus cases accounted for just 10% of the global cases. Hubei is the most-affected province within China and Wuhan, the capital city of Hubei, is the city affected worst by the coronavirus. Hubei has witnessed more than 67,000 coronavirus-positive cases and continues to report deaths, although at a slower rate than before.</p>
+
+      <p>The <b>UK</b> coronavirus cases surged significantly in the third and fourth weeks of March making it one of the top ten countries with coronavirus.</p>
+
+      <p> Also, following the first confirmed coronavirus infection on 10 March, the number of coronavirus cases in <b>Turkey</b> increased sharply making it one of the top ten countries affected by COVID-19, in less than four weeks.</p>
+
+      <p><b>Iran</b>, <b>Switzerland</b> and <b>France</b> are among the top 10 infected countries too.</p>
+      
   
-  selection.on('mouseout.highlight', function(d) {
-    let path = d3.select(this).datum().path(selection.data()[0]);
-    let update = selection.data(path, node => node.x && node.y);
-    update.classed('selected', false);
 
-    selection
-      .transition()
-      .attr("fill-opacity", "1")
-      .style('stroke', 'black');
-  });
+    </div>
+  </section>
   
+  </body>
 
-  function showTooltip(g, node) {
-    let gbox = g.node().getBBox(); // get bounding box of group BEFORE adding text
-    let nbox = node.node().getBBox(); // get bounding box of node
 
-    // calculate shift amount
-    let dx = nbox.width / 2;
-    let dy = nbox.height / 2;
+       
 
-    // retrieve node attributes (calculate middle point)
-    let x = nbox.x + dx;
-    let y = nbox.y + dy;
 
-    // get data for node
-    let datum = node.datum();
+<!-- Page footer -->
+  <!-- https://bulma.io/documentation/layout/footer/ -->
+  <footer class="footer">
+    <div class="content has-text-centered is-size-7">
+      <p>
+        <a href="#top">
+          <span class="fas fa-arrow-up"></span>
+          <span class="has-text-weight-medium">Back to Top</span>
+        </a>
+      </p>
 
-    // remove "java.base." from the node name
-    let name = datum.data.key;
+      <p>
+        <!-- TODO: Change to link to your Github repository -->
+        <a href="https://github.com/usf-cs360-spring2020/template-bulma" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+          <i class="fab fa-github-alt"></i>&nbsp;<strong>Github</strong>
+        </a>
 
-    // use node name and total size as tooltip text
-    numberFormat = d3.format(".2~s");
-    let text = `${name} (${numberFormat(datum.value)} call)`;
+        <a href="https://fontawesome.com/" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+          <i class="fab fa-font-awesome"></i>&nbsp;<strong>FontAwesome</strong>
+        </a>
 
-    // create tooltip
-    let tooltip = g.append('text')
-      .text(text)
-      .attr('x', x)
-      .attr('y', y)
-      .attr('dy', -dy - 4) // shift upward above circle
-      .attr('text-anchor', 'middle') // anchor in the middle
-      .attr('id', 'tooltip');
+        <a href="https://bulma.io" class="button is-small">
+          <img src="https://bulma.io/images/made-with-bulma--semiblack.png" alt="Made with Bulma" width="128" height="24">
+        </a>
+      </p>
+    </div>
+  </footer>
+  <!-- End page footer -->
 
-    // get bounding box for the text
-    let tbox = tooltip.node().getBBox();
+  <!-- Mobile menu responsiveness -->
+  <!-- https://bulma.io/documentation/components/navbar/ -->
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
-    // if text will fall off left side, anchor at start
-    if (tbox.x < gbox.x) {
-      tooltip.attr('text-anchor', 'start');
-      tooltip.attr('dx', -dx); // nudge text over from center
+    if ($navbarBurgers.length > 0) {
+      $navbarBurgers.forEach( el => {
+        el.addEventListener('click', () => {
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+        });
+      });
     }
-    // if text will fall off right side, anchor at end
-    else if ((tbox.x + tbox.width) > (gbox.x + gbox.width)) {
-      tooltip.attr('text-anchor', 'end');
-      tooltip.attr('dx', dx);
-    }
-
-    // if text will fall off top side, place below circle instead
-    if (tbox.y < gbox.y) {
-      tooltip.attr('dy', dy + tbox.height);
-    }
-  }
-
-
-  // show tooltip text on mouseover (hover)
-  selection.on('mouseover.tooltip', function(d) {
-    console.log(d);
-    showTooltip(g, d3.select(this));
-
-  })
-
-  // remove tooltip text on mouseout
-  selection.on('mouseout.tooltip', function(d) {
-    g.select("#tooltip").remove();
   });
-  }
-
-
-
- //legend
-  svg.append("circle")
-  .attr("cx", width - 200)
-  .attr("cy", height - 120)
-  .attr("r", 5)
-  .style("fill", color(3))
-  .style("stroke", "black")
-
-  svg.append("circle")
-  .attr("cx", width - 200)
-  .attr("cy", height - 140)
-  .attr("r", 5)
-  .style("fill",  color(2))
-  .style("stroke", "black")
-
-  svg.append("circle")
-  .attr("cx", width - 200)
-  .attr("cy", height - 160)
-  .attr("r", 5)
-  .style("fill",  color(1))
-  .style("stroke", "black")
-  
-  svg.append("circle")
-  .attr("cx", width - 200)
-  .attr("cy", height - 180)
-  .attr("r", 5)
-  .style("fill", color(0))
-  .style("stroke", "black")
-
-  //add text
-  svg.append("text")
-  .attr("class", "legend-text")
-  .attr("x", width - 180)
-  .attr("y", height - 120)
-  .text("Unit Type")
-  .attr("alignment-baseline", "middle")
-  svg
-  .append("text")
-  .attr("class", "legend-text")
-  .attr("x", width - 180)
-  .attr("y", height - 140)
-  .text("Call Type")
-  .attr("alignment-baseline", "middle")
-  svg
-  .append("text")
-  .attr("class", "legend-text")
-  .attr("x", width - 180)
-  .attr("y", height - 160)
-  .text("Call Type Group")
-  .attr("alignment-baseline", "middle")
-  svg
-  .append("text")
-  .attr("class", "legend-text")
-  .attr("x", width - 180)
-  .attr("y", height - 180)
-  .text("City")
-  .attr("alignment-baseline", "middle")
-}
-
-</script>
+  </script>
+  <!-- End mobile menu responsiveness -->

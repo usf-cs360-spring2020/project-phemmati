@@ -1,7 +1,69 @@
 <!DOCTYPE html>
-<meta charset="UTF-8">
-<style>
+<html>
+  <head>
+    <meta charset="utf-8">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- TODO: Change title -->
+    <title>Final Release</title>
+
+    <!-- Load Bulma from CDN (consider saving it to repository instead) -->
+    <!-- https://bulma.io/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+
+    <!-- Load Font Awesome 5 (free) icons -->
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <!-- load the d3.js library --> 
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+
+
+    <style>
+   
+   body, html {
+    height: 100%;
+}
+
+/* The hero image */
+.hero-image {
+  /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+  background-image: url("covid5.jpg");
+
+  /* Set a specific height */
+  height: 50%;
+
+  /* Position and center the image to scale nicely on all screens */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+/* Place text in the middle of the image */
+.hero-body {
+  text-align: center !important;
+  position: relative;
+  top: 50%;
+  left: 20%;
+  font-size: 2pt;
+  
+}
+.title1 {
+    color: black !important;
+    text-shadow: 2px 2px white;
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.125;
+}
+
+.subtitle1 {
+    color: black !important;
+    text-shadow: 1px 1px white;
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.25;
+}
 .node circle {
   fill: red;
   stroke: steelblue; 
@@ -17,50 +79,275 @@
   stroke: #ccc;
   stroke-width: 2px; 
 }
-    /* Tooltip container */
-    .tooltip {
-      
-        display: inline-block;
-        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-    }
+    
+div.tooltip {
+    position: absolute;
+    text-align: left;
+    width: 100px;
+    height: 40px;
+    padding: 2px;
+    font: 10px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+text#tooltip {
+  font-family: sans-serif;
+  font-size: 12px;
+  text-shadow: 1px 1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, -1px -1px 0 #fff;
+  font-weight: 900;
+}
+  </style>
+  </head>
+
   
-    /* Tooltip text */
-    .tooltip .tooltiptext {
-        visibility: hidden;
-        width: 120px;
-        bottom: 100%;
-        left: 50%;
-        margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
-        background-color: black;
-        color: #fff;
-        text-align: center;
-        padding: 5px 0;
-        border-radius: 6px;
 
-        /* Position the tooltip text - see examples below! */
-        position: absolute;
-        z-index: 1;
-    }
+  <body>
 
-    /* Show the tooltip text when you mouse over the tooltip container */
-    .tooltip:hover .tooltiptext {
-        visibility: visible;
-    }
+  <!-- Page header -->
+  <!-- https://bulma.io/documentation/layout/hero/ -->
+  <section class="hero-image">
+    <div class="hero-body">
+      <div class="container">
+        <!-- TODO: Change title -->
+        <h1 class="title1">What Is The Death Rate of Covid-19 for Different Regions?</h1>
+        <!-- TODO: Change subtitle -->
+        <h2 class="subtitle1">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
+      </div>
+    </div>
+  </section>
+  <!-- End page header -->
 
-</style>
+  <!-- Page navigation -->
+  <!-- https://bulma.io/documentation/components/navbar/ -->
+  <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <div class="container">
+      <div class="navbar-brand">
+        <!-- TODO: Change link to repository homepage if needed -->
+        <!-- TODO: Change which navbar-item is-active if needed -->
+        <a class="navbar-item is-active" href="index.html">
+          <span class="icon"><i class="fas fa-home"></i></span>
+          <span>Home</span>
+        </a>
+
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="main-menu" class="navbar-menu has-text-weight-medium">
+        <!-- Left navbar items -->
+        <div class="navbar-start">
+          <a class="navbar-item" href="data.html" title="Data">
+            <span class="icon"><i class="fas fa-table"></i></span>
+            <span>Data</span>
+          </a>
+
+          <!-- TODO: Modify or remove dropdown -->
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              Visualizations
+            </a>
+
+            <div class="navbar-dropdown">
+              <a href="line.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Alpha Release</span>
+              </a>
+
+              <a href="treeMap.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Beta Release</span>
+              </a>
+              <a href="tree.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Final Release</span>
+              </a>
+              
+              
+            </div>
+          </div>
+        </div>
+
+        <!-- Right navbar items -->
+        <div class="navbar-end">
+          <!-- TODO: Update as needed -->
+          <a class="navbar-item" href="grade.html" title="About">
+            <span class="icon"><i class="fas fa-tasks"></i></span>
+            <span>Grade</span>
+          </a>
+
+          <a class="navbar-item" href="about.html" title="About">
+            <span class="icon"><i class="fas fa-info-circle"></i></span>
+            <span>About</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- End page navigation -->
+
+
 
 <body>
+  
+<section class="section">
+    <div class="container content">
+      <h1>Counties/Regions In Each Continent With Confirmed Cases of Covid-19</h1><br>
+      
+     
+       <h6> Traditional Tree </h6>
+      <figure class="media-left">
+            <div id="tree"></div>
+          </figure>
 
-<!-- load the d3.js library --> 
-<script src="https://d3js.org/d3.v5.min.js"></script>
 
-<script>
+
+          <h6> TreeMap </h6>
+ <figure class="media-left">
+            <div id="chart"></div>
+          </figure>
+       
+
+<h3>Instruction</h3>
+
+<p>
+        Both plots show the Countries and Regions with Covid-19 Confirmed cases by mid-April of 2020. 
+      </p>
+
+      <h3>Data Wrangling</h3>
+
+
+      <p>Data has been processed and converted to JSON using Python. </p>
+
+      <h3>Conclusion</h3>
+
+      <br>
+
+      <p>COVID-19 pandemic in <b>Africa</b> Cases have been confirmed in most African countries and territories. Advisers say that a strategy based on testing could allow African countries to minimise lockdowns that inflict enormous hardship on those who depend on income earned day by day to be able to feed themselves and their families. Even in the best scenario, the United Nations says 74 million test kits and 30,000 ventilators will be needed by the continent's 1.3 billion people in 2020. Most of the reported cases are from four countries: South Africa, Morocco, Egypt and Algeria, but it is believed that there is widespread under-reporting in other African countries with poorer health care systems. As of 2 May, cases have been confirmed in all African countries except for Lesotho. There have been no reported cases in the British Overseas Territory of Saint Helena, Ascension and Tristan da Cunha.</p>
+
+      <br>
+
+      <p>In <b>Asia</b> A cluster of mysterious pneumonia cases was detected in December 2019 in Wuhan and eventually spread to the rest of China. Afterwards, many other Asian countries started to confirm cases, with some of the most affected countries being South Korea, Turkey and Iran. A number of countries such as India and Malaysia also experience a surge in cases following religious gathering events in those countries. As of 30 April, cases have been reported in all Asian countries except for North Korea and Turkmenistan, both of which have suspected cases. The lack of cases in North Korea is disputed, given its shared border with China, while concerns have been raised about the ability for its health system to cope, and sources stating that the health system has never really recovered from SARS and H1N1 in the 2000s.</p>
+
+      <br>
+
+      <p>In <b>Europe</b>, A small number of initial cases reported in France, Germany and other countries. On 21 February, a large outbreak was reported in Italy, mostly in the north near Milan. Cases grew rapidly as the outbreak spread across Europe. Cases have been reported in all European countries after Montenegro reported a case on 17 March, and in almost all European territories after the Isle of Man on 19 March, the disputed state of Transnistria on 21 March and Åland Islands on 22 March reported cases. No cases have been reported in Svalbard and Jan Mayen Islands. The WHO declared Europe as the new center of the virus after the situation improved in China.</p>
+
+      <br>
+
+      <p>In <b>North America</b>, The first cases in North America were reported in the United States in January 2020. Cases were reported in all North American countries after Saint Kitts and Nevis confirmed a case on 25 March, and in all North American territories after Bonaire confirmed a case on 16 April. On 26 March 2020, the U.S. became the country with the highest number of confirmed COVID-19 infections, with over 82,000 cases. On 11 April 2020, the U.S. became the country with the highest official death toll for COVID-19, with over 20,000 deaths. As of 2 May 2020 the total cases of COVID-19 were 1,092,815, with 64,238 total deaths.</p>
+      <p>Canada reported 60,616 cases and 3,842 deaths on 4 May, while Mexico reported 23,471 cases and 2,154 deaths. The Dominican Republic and Cuba are the only Caribbean countries reporting more than 1,000 cases (7,954 and 1,649, respectively), while Panama and Honduras lead Central America with 7,197 and 1,055 cases, respectively.</p>
+
+      <br>
+
+      <p>In <b>Oceania</b> The first confirmed case was in Melbourne, Victoria on 25 January. Many small Pacific island nations have thus far avoided the outbreak by closing their international borders. As of 24 April, no cases have been reported in American Samoa (territory of the United States), Christmas Island (external territory of Australia), the Cocos (Keeling) Islands (external territory of Australia), the Cook Islands (associated state of New Zealand), Kiribati, the Marshall Islands, the Federated States of Micronesia, Nauru, Niue (associated state of New Zealand), Norfolk Island (external territory of Australia), Palau, the Pitcairn Islands (British Overseas Territory), Samoa, Solomon Islands, Tokelau (territory of New Zealand), Tonga, Tuvalu, Vanuatu, and Wallis and Futuna (French overseas collectivity).
+
+      <p>As of 2 May, ten sovereign countries in Oceania have not reported any case of coronavirus: Kiribati, the Marshall Islands, the Federated States of Micronesia, Nauru, Palau, Samoa, Solomon Islands, Tonga, Tuvalu and Vanuatu.</p>
+
+      <p>As of 5 May, 8,227 cases have been reported in Oceania; the five countries reporting the most cases are: Australia (6,825), New Zealand (1,137), Guam (149), French Polynesia (58), and Fiji (18). 122 deaths have been reported in the region: Australia (95), New Zealand (20), Guam (5), and Northern Mariana Islands (2).</p>
+
+      <br>
+
+      <p>Inn <b>South America</b>, As of 19 March, cases have been confirmed in all South American countries. Cases were confirmed in all South American territories, as cases were confirmed in the Falkland Islands on 3 April. The coronavirus was first reported in South America on 26 February when Brazil confirmed a case in São Paulo. Since then, governments across the region have taken an array of actions to protect their citizens and contain the spread of COVID-19. Brazil reported 100,000 cases of infection and 7,000 deaths on May 3, becoming the ninth highest number of cases in the world.</p>
+
+      <p>The other South American countries with the highest number of cases are Peru (45,928), Ecuador (29,538), Chile (19,663), Colombia (7,668), Argentina (4,783), and Bolivia (1,594).Bouvet Island and South Georgia and the South Sandwich Islands have not reported any cases as of 2 May.</p>
+
+
+      <p>The outbreak spread to several cruise ships including the <b>Diamond Princess</b>, <b>the Grand Princess</b>, <b>the World Dream</b>, <b>the MS Westerdam</b> and the <b>MS Braemar</b>.</p>
+
+      <p>Cruise operators have either cancelled or changed their itineraries as countries across the world implement travel restrictions to curb the disease. Ports are refusing to accept cruise ships that have either been to Chinese ports or are carrying Chinese passengers.</p>
+
+      <br>
+      <br>
+      <br>
+
+      <span class="heading">Acknowledgements</span>
+
+        <p>
+          <a href="https://en.wikipedia.org/wiki/COVID-19_pandemic_by_country_and_territory">Link to insiration</a><br/>
+        </p>
+
+        <p class="is-6">
+          <em>Thanks to all our front-line fighters. Doctors, Nurses, Police Departments and Cleaners for keeping us safe.</em>
+        </p>
+      
+  
+
+    </div>
+  </section>
+</body>
+  
+
+
+
+<!-- Page footer -->
+  <!-- https://bulma.io/documentation/layout/footer/ -->
+  <footer class="footer">
+    <div class="content has-text-centered is-size-7">
+      <p>
+        <a href="#top">
+          <span class="fas fa-arrow-up"></span>
+          <span class="has-text-weight-medium">Back to Top</span>
+        </a>
+      </p>
+
+      <p>
+        <!-- TODO: Change to link to your Github repository -->
+        <a href="https://github.com/usf-cs360-spring2020/template-bulma" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+          <i class="fab fa-github-alt"></i>&nbsp;<strong>Github</strong>
+        </a>
+
+        <a href="https://fontawesome.com/" class="button is-small" style="padding-left: 1em; padding-right: 1em;">
+          <i class="fab fa-font-awesome"></i>&nbsp;<strong>FontAwesome</strong>
+        </a>
+
+        <a href="https://bulma.io" class="button is-small">
+          <img src="https://bulma.io/images/made-with-bulma--semiblack.png" alt="Made with Bulma" width="128" height="24">
+        </a>
+      </p>
+    </div>
+  </footer>
+  <!-- End page footer -->
+
+  <!-- Mobile menu responsiveness -->
+  <!-- https://bulma.io/documentation/components/navbar/ -->
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+    if ($navbarBurgers.length > 0) {
+      $navbarBurgers.forEach( el => {
+        el.addEventListener('click', () => {
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+        });
+      });
+    }
+  });
+  </script>
+  <!-- End mobile menu responsiveness -->
+
+  
+  <script>
   
   var treeData ={
       
     "name": "Covid-19",
+    "Confirmed": 3113693,
+    "Death": 217134,
+    "Recovered": 1262,
     "children": [{
         "name": "Asia",
+        "Confirmed": 490903,
+        "Death": 17881,
+        "Recovered": 2181,
         "children": [{
             "name": "United Arab Emirates",
             "Confirmed": 11380,
@@ -216,6 +503,9 @@
           "Recovered": 7747
         },{
           "name": "China",
+          "Confirmed": 83940,
+          "Death": 4638,
+          "Recovered": 1262,
           "children": [{
                 "name": "Zhejiang",
                 "Confirmed": 1268,
@@ -431,6 +721,9 @@
         }]  
     }, {
         "name": "Africa",
+        "Confirmed": 34667,
+        "Death": 1516,
+        "Recovered": 1262,
         "children": [{
             "name": "Zimbabwe",
             "Confirmed": 32,
@@ -699,6 +992,9 @@
         }]
     }, {
         "name": "Australia/Oceania",
+        "Confirmed": 8244,
+        "Death": 108,
+        "Recovered": 1262,
         "children": [{
             "name": "Papua New Guinea",
             "Confirmed": 8,
@@ -716,6 +1012,9 @@
             "Recovered": 12
         },{
             "name": "Australia",
+            "Confirmed": 6744,
+            "Death": 89,
+            "Recovered": 1262,
             "children": [{
                 "name": "Western Australia",
                 "Confirmed": 550,
@@ -760,10 +1059,13 @@
         }]
     }, {
         "name": "Europe",
+        "Confirmed": 1326261,
+        "Death": 126472,
+        "Recovered": 1262,
         "children": [{
             "name": "United Kingdom",
-            "Confirmed": 161145,
-            "Death": 21678,
+            "Confirmed": 162350,
+            "Death": 21745,
             "Recovered": 0,            
             "children": [{
                 "Province State": "Turks and Caicos Islands",
@@ -888,8 +1190,8 @@
             "Recovered": 589
         },{
             "name": "Netherlands",
-            "Confirmed": 38416,
-            "Death": 4566,
+            "Confirmed": 38612,
+            "Death": 4582,
             "Recovered":0,
             "children": [{
                 "name": "Sint Maarten",
@@ -995,8 +1297,8 @@
             "Recovered": 168
         },{
             "name": "France",
-            "Confirmed": 167605,
-            "Death": 23660,
+            "Confirmed": 169053,
+            "Death": 23694,
             "Recovered": 46886,
             "children": [{
                 "name": "St Martin",
@@ -1061,7 +1363,7 @@
             "Recovered": 240
         },{
             "name": "Denmark",
-            "Confirmed": 8851,
+            "Confirmed": 9049,
             "Death": 434,
             "Recovered": 6121,
             "children":[{
@@ -1129,10 +1431,13 @@
         }]
     }, {
         "name": "North America",
+        "Confirmed": 1098087,
+        "Death": 63562,
+        "Recovered": 1262,
         "children": [{
             "name": "United States",
-            "Confirmed": 0,
-            "Death": 0,
+            "Confirmed": 1012582,
+            "Death": 58355,
             "Recovered": 0,
                 "children": [{
                     "name": "Wyoming",
@@ -1507,6 +1812,9 @@
                 "Recovered": 306
             },{
                 "name": "Canada",
+                "Confirmed": 51150,
+                "Death": 2983,
+                "Recovered": 1262,
                 "children":[{
                     "name": "Yukon",
                     "Confirmed": 11,
@@ -1606,6 +1914,9 @@
             }]
     }, {
         "name": "South America",
+        "Confirmed": 155531,
+        "Death": 7595,
+        "Recovered": 1262,
         "children": [{
                 "name": "Venezuela",
                 "Confirmed": 329,
@@ -1692,7 +2003,7 @@ var widthScale = d3.scaleLinear()
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#tree").append("svg")
     .attr("width", width + margin.right + margin.left)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -1738,7 +2049,8 @@ function update(source) {
   nodes.forEach(function(d){ d.y = d.depth * 180});
 
   // ****************** Nodes section ***************************
-
+  
+  
   // Update the nodes...
   var node = svg.selectAll('g.node')
       .data(nodes, function(d) {return d.id || (d.id = ++i); });
@@ -1748,27 +2060,14 @@ function update(source) {
       .attr("transform", function(d) {
         return "translate(" + source.y0 + "," + source.x0 + ")";
     })
-    .on('click', click)
-    .on("mouseover", function(d) {
-          var g = d3.select(this); // The node
-          // The class is used to remove the additional text later
-          var info = g.append('text')
-             .classed('info', true)
-             .attr('x', 400)
-             .attr('y', 0)
-             .text(function(d) { return "Confirmed: " + d.data.Confirmed + "Death: " + d.data.Death; })
-      })
-      .on("mouseout", function() {
-          // Remove the info text on mouse out.
-          d3.select(this).select('text.info').remove()
-        });
-    ;
-  // Define the div for the tooltip
-var div = d3.select("body").append("div")   
-    .attr("class", "tooltip")               
-    .style("opacity", 0);
+    .on('click', click);
+ 
 
-
+   // Define the div for the tooltip
+      let div = d3.select("body").append("div")
+          .attr("class", "tooltip")
+          .style("opacity", 0);
+  
   // Add Circle for the nodes
   nodeEnter.append('circle')
       .attr('class', 'node')
@@ -1776,7 +2075,20 @@ var div = d3.select("body").append("div")
       .style("fill", function(d) {
           return d._children ? "lightsteelblue" : "grey";
       })
-      .style("stroke", function(d){return colorScale(d.data.female/(d.data.female + d.data.male))});
+      .style("stroke", function(d){return colorScale(d.data.female/(d.data.female + d.data.male))})
+      .on("mouseover", function(d) {
+            div.transition()
+                .duration(200)
+                .style("opacity", 1);
+            div.html("Confirmed: " + d.data.Confirmed + "\n"+ "Death: " + d.data.Death)
+            .style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY) + "px");
+            })
+      .on("mouseout", function(d) {
+          div.transition()
+              .duration(400)
+              .style("opacity", 0);
+      });
 
   // Add labels for the nodes
   nodeEnter.append('text')
@@ -1890,10 +2202,160 @@ var div = d3.select("body").append("div")
       } else {
         d.children = d._children;
         d._children = null;
+        
       }
     update(d);
   }
 }
 
-</script>
-</body>
+  /***********************************************************************************************/
+  
+  let data1 = d3.hierarchy(treeData)
+              .eachBefore(function(d) { d.id = (d.parent ? d.parent.id + "." : "") + d.data.name; });
+  
+  drawtreemap(data1);
+  
+function drawtreemap(data1){
+  
+  let width1 = 960;
+  let height1 = 500;
+  let pad1 = 35;
+  
+  
+  
+  // sort largest nodes first
+  data1.sort(function(a, b) { 
+    return b.height1 - a.height1 || b.count - a.count; 
+  });
+  
+  console.log(data1);
+  // make sure value is set
+  data1.sum(d => d.Confirmed)
+  
+  // layout based on width, height minus some padding
+   let layout1 = d3.treemap().padding(5).size([width1 - 2* pad1, height1 - 1*pad1]);
+  
+  layout1(data1);
+  
+  // color = d3.scaleSequential([data.height, 0], d3.interpolateCividis);
+  color1 = d3.scaleSequential([data1.height, 0], d3.interpolateViridis)
+  
+  
+   let svg1 = d3.select("#chart").append("svg")
+      .style("width", width1)
+      .style("height", height1);
+  
+  let plot1 = svg1.append("g")
+    .attr("id", "plot")
+    .attr("transform", translate(pad1, pad1));
+  
+  let rects = plot1.selectAll("rect")
+    .data(data1.descendants())
+    .enter()
+    .append("rect")
+    .attr("x", function(d) { return d.x0; })
+    .attr("y", function(d) { return d.y0; })
+    .attr("width", function(d) { return d.x1 - d.x0; })
+    .attr("height", function(d) { return d.y1 - d.y0; })
+    .attr("id", function(d) { return d.data.name; })
+    .attr("class", "node")
+    .style("fill", function(d) {return color1(d.depth)});
+  
+  
+  setupEvents(plot1, rects, false);
+  
+  }
+  
+  function setupEvents(g, selection, raise) {
+  selection.on('mouseover.highlight', function(d) {
+    // https://github.com/d3/d3-hierarchy#node_path
+    // returns path from d3.select(this) node to selection.data()[0] root node
+    let path = d3.select(this).datum().path(selection.data()[0]);
+    
+    // select all of the nodes on the shortest path
+    let update = selection.data(path, node => node.data.name);
+
+    // highlight the selected nodes
+    update.classed('selected', true);
+    
+    if (raise) {
+      update.raise();
+    }
+  });
+  
+  selection.on('mouseout.highlight', function(d) {
+    let path = d3.select(this).datum().path(selection.data()[0]);
+    let update = selection.data(path, node => node.data.name);
+    update.classed('selected', false);
+  });
+  
+  // show tooltip text on mouseover (hover)
+  selection.on('mouseover.tooltip', function(d) {
+    showTooltip(g, d3.select(this));
+  });
+  
+  // remove tooltip text on mouseout
+  selection.on('mouseout.tooltip', function(d) {
+    g.select("#tooltip").remove();
+  }); 
+}
+  
+  function translate(x, y) {
+    return 'translate(' + String(x) + ',' + String(y) + ')';
+}
+
+
+function showTooltip(g, node) {
+  let gbox = g.node().getBBox();     // get bounding box of group BEFORE adding text
+  let nbox = node.node().getBBox();  // get bounding box of node
+  
+  // calculate shift amount
+  let dx = nbox.width / 2;
+  let dy = nbox.height / 2;
+
+  // retrieve node attributes (calculate middle point)
+  let x = nbox.x + dx;
+  let y = nbox.y + dy;
+
+  // get data for node
+  let datum = node.datum();
+
+  let name = datum.data.name;
+  
+  // use node name and total size as tooltip text
+  let text = `${name} (Confirmed:${datum.data.Confirmed}, Death: ${datum.data.Death})`;
+  
+  // create tooltip
+  let tooltip1 = g.append('text')
+    .text(text)
+    .attr('x', x)
+    .attr('y', y-30)
+    .attr('dy', -dy - 4) // shift upward above circle
+    .attr('text-anchor', 'middle') // anchor in the middle
+    .attr('id', 'tooltip');
+
+  // it is possible the tooltip will fall off the edge of the
+  // plot area. we can detect when this happens, and set the
+  // text anchor appropriately
+
+  // get bounding box for the text
+  let tbox = tooltip1.node().getBBox();
+
+  // if text will fall off left side, anchor at start
+  if (tbox.x < gbox.x) {
+    tooltip1.attr('text-anchor', 'start');
+    tooltip1.attr('dx', -dx); // nudge text over from center
+  }
+  // if text will fall off right side, anchor at end
+  else if ((tbox.x + tbox.width) > (gbox.x + gbox.width)) {
+    tooltip1.attr('text-anchor', 'end');
+    tooltip1.attr('dx', dx);
+  }
+
+  // if text will fall off top side, place below circle instead
+  if (tbox.y < gbox.y) {
+    tooltip1.attr('dy', dy + tbox.height);
+  }
+}
+  
+  </script>

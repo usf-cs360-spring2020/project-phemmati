@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- TODO: Change title -->
-    <title>Covid-19 for Top 10</title>
+    <title>Covid-19 Visualizations</title>
 
     <!-- Load Bulma from CDN (consider saving it to repository instead) -->
     <!-- https://bulma.io/ -->
@@ -14,19 +14,68 @@
 
     <!-- Load Font Awesome 5 (free) icons -->
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+
+    <style>
+   
+   body, html {
+    height: 100%;
+}
+
+/* The hero image */
+.hero-image {
+  /* Use "linear-gradient" to add a darken background effect to the image (photographer.jpg). This will make the text easier to read */
+  background-image: url("covid4.jpg");
+
+  /* Set a specific height */
+  height: 50%;
+
+  /* Position and center the image to scale nicely on all screens */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+}
+
+/* Place text in the middle of the image */
+.hero-body {
+  text-align: center !important;
+  position: relative;
+  top: 50%;
+  left: 20%;
+  font-size: 2pt;
+  
+}
+.title1 {
+    color: white !important;
+    text-shadow: 2px 2px black;
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.125;
+}
+
+.subtitle1 {
+    color: lightgrey !important;
+    text-shadow: 1px 1px black;
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.25;
+}
+  </style>
   </head>
+
+  
 
   <body>
 
   <!-- Page header -->
   <!-- https://bulma.io/documentation/layout/hero/ -->
-  <section class="hero is-info is-bold">
+  <section class="hero-image">
     <div class="hero-body">
       <div class="container">
         <!-- TODO: Change title -->
-        <h1 class="title">How is Covid-19 for Top 10 Infected Regions</h1>
+        <h1 class="title1">What Is The Death Rate of Covid-19 for Different Regions?</h1>
         <!-- TODO: Change subtitle -->
-        <h2 class="subtitle">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
+        <h2 class="subtitle1">Which Countries Have a Higher Death Rate and Why The Death Rate Varies Among Them?</h2>
       </div>
     </div>
   </section>
@@ -68,16 +117,16 @@
             <div class="navbar-dropdown">
               <a href="line.html" class="navbar-item">
                 <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>Line Chart</span>
+                <span>Alpha Release</span>
               </a>
 
-              <a href="tree.html" class="navbar-item">
-                <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>d3</span>
-              </a>
               <a href="treeMap.html" class="navbar-item">
                 <span class="icon"><i class="fas fa-chart-line"></i></span>
-                <span>TreeMap</span>
+                <span>Beta Release</span>
+              </a>
+              <a href="tree.html" class="navbar-item">
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
+                <span>Final Release</span>
               </a>
               
               
@@ -117,12 +166,19 @@
         </p>
 
 
-        <p>One Asian country and seven European countries are among the ten most affected list of countries with coronavirus, while more European countries are witnessing a surge in cases. The US replaced China as the country with the highest coronavirus cases on 26 March, while more than 92% of the global coronavirus cases are currently outside China. But what is the actual number of confired and deceased cases? Why death rate is flactuating between different countries? What are the major factors impacting the rate?
+        <p>COVID-19 is the disease caused by the new coronavirus that emerged in China in December 2019. It's symptoms include cough, fever, shortness of breath, muscle aches, sore throat, unexplained loss of taste or smell, diarrhea and headache. COVID-19 can be severe, and some cases have caused death. The new coronavirus can be spread from person to person. It is diagnosed with a laboratory test.</p>
+
+         <p>As of now, researchers know that the new coronavirus is spread through droplets released into the air when an infected person coughs or sneezes. The droplets generally do not travel more than a few feet, and they fall to the ground (or onto surfaces) in a few seconds — this is why social and physical distancing is effective in preventing the spread.</p>
+
+
+        <p>Many countries are among the affected list of countries with coronavirus, and more European countries are witnessing a surge in cases. The US replaced China as the country with the highest coronavirus cases on 26 March, while more than 92% of the global coronavirus cases are currently outside China. But what is the actual number of confirmed and deceased cases? Why death rate is flactuating between different countries? What are the major factors impacting the rate?
           
         </p>
 
 
-        <p>The goal for this website is to visualize and discuss a dataset related to Top 10 Covid-19 Infected Regions. Keep reading to find out which regions are having a better responce to this novel virus.</p>
+
+
+        <p>The goal for this website is to visualize and discuss a dataset related to Infected Regions worldwide. Keep reading to find out which regions are having a better responce to this novel virus.</p>
 
         
         
